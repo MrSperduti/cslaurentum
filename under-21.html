@@ -3,16 +3,20 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Giocatori Under 21</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h1>Giocatori Under 21</h1>
-  <div id="elencoGiocatori"></div>
+  <div class="container">
+    <h1>Giocatori Under 21</h1>
+    <div id="elencoGiocatori"></div>
+    <button onclick="location.href='index.html'">Torna alla Home</button>
+  </div>
   <script>
     fetch('dati/giocatori.json')
       .then(res => res.json())
-      .then(data => {
-        const giocatori = Array.isArray(data) ? data : data.giocatori || [];
+      .then(giocatori => {
         const elenco = document.getElementById("elencoGiocatori");
         const filtrati = giocatori.filter(g => g.categoria === "Under 21");
         if (filtrati.length === 0) {
@@ -21,7 +25,7 @@
         }
         filtrati.forEach((g, i) => {
           const div = document.createElement("div");
-          div.innerHTML = `<p><strong>${g.nome} ${g.cognome}</strong> - ${g.categoria}</p>`;
+          div.innerHTML = `<p><a href="giocatore.html?id=${i}">${g.nome} ${g.cognome}</a></p>`;
           elenco.appendChild(div);
         });
       });
