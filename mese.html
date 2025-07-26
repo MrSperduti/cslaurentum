@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contabilità Mensile</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Contabilità del mese</h1>
+    <div id="meseTitolo"></div>
+    <h2>Entrate</h2>
+    <table id="tabellaEntrate">
+      <tr><th>Data</th><th>Descrizione</th><th>Totale</th><th>Note</th></tr>
+    </table>
+    <h2>Uscite</h2>
+    <table id="tabellaUscite">
+      <tr><th>Data</th><th>Descrizione</th><th>Totale</th><th>Note</th></tr>
+    </table>
+    <button onclick="window.history.back()">Torna Indietro</button>
+    <button onclick="location.href='index.html'">Torna alla Home</button>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const mese = urlParams.get("mese");
+    const titolo = document.getElementById("meseTitolo");
+    const entrateTable = document.getElementById("tabellaEntrate");
+    const usciteTable = document.getElementById("tabellaUscite");
+
+    const meseNome = mese ? mese.replace(/([a-z]+)(\d+)/, function(_, m, y) {
+      return m.charAt(0).toUpperCase() + m.slice(1) + " " + y;
+    }) : "";
+
+    titolo.innerHTML = "<h2>" + meseNome + "</h2>";
+
+    fetch("dati/contabilita.json")
+      .then(res => res.json())
+      .then(data => {
+        const entrate = data.Entrata || [];
+        const uscite = data.Uscita || [];
+
+        const entrateMese = entrate.filter(e => e.data && e.data.includes(mese));
+        const usciteMese = uscite.filter(u => u.data && u.data.includes(mese));
+
+        entrateMese.forEach(e => {
+          const row = entrateTable.insertRow();
+          row.innerHTML = `<td>${e.data}</td><td>${e.descrizione}</td><td>€ ${e.totale}</td><td>${e.note}</td>`;
+        });
+
+        usciteMese.forEach(u => {
+          const row = usciteTable.insertRow();
+          row.innerHTML = `<td>${u.data}</td><td>${u.descrizione}</td><td>€ ${u.totale}</td><td>${u.note}</td>`;
+        });
+      });
+  </script>
+</body>
+</html>
