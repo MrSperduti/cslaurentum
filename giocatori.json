@@ -1,0 +1,30 @@
+[
+  {
+    "nome": "LORENZO",
+    "cognome": "RELUCENTI",
+    "dataNascita": "2002-12-21",
+    "indirizzo": "via padova",
+    "telefono": "33333333",
+    "documento": "ak343546576",
+    "matricola": "1232432354",
+    "taglia": "L",
+    "maglia": "13",
+    "visitaMedica": "No",
+    "scadenza": "",
+    "categoria": "Serie C2"
+  },
+  {
+    "nome": "gianluca ",
+    "cognome": "sperduti",
+    "dataNascita": "1986-05-06",
+    "indirizzo": "via terni",
+    "telefono": "222222",
+    "documento": "sfadsvbdfngfh",
+    "matricola": "dzvsgbdfb df",
+    "taglia": "m",
+    "maglia": "5",
+    "visitaMedica": "Si",
+    "scadenza": "",
+    "categoria": "Serie C2"
+  }
+]
