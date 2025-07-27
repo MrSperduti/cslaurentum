@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contabilità - CS LAURENTUM</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Contabilità</h1>
+    <div id="tabellaCompleta"></div>
+    <div id="riepilogo">
+      <p>Caricamento dati...</p>
+    </div>
+    <h2>📅 Mesi</h2>
+    <div id="listaMesi"></div>
+    <button onclick="location.href='index.html'">Torna alla Home</button>
+  </div>
+  <script>
+    const riepilogo = document.getElementById("riepilogo");
+    const listaMesi = document.getElementById("listaMesi");
+    const mesi = ["luglio2025", "agosto2025", "settembre2025", "ottobre2025", "novembre2025", "dicembre2025",
+                  "gennaio2026", "febbraio2026", "marzo2026", "aprile2026", "maggio2026", "giugno2026", "luglio2026"];
+
+    fetch("dati/contabilita.json")
+      .then(res => res.json())
+      .then(data => {
+        const entrate = data.Entrata || [];
+        const uscite = data.Uscita || [];
+        const totaleEntrate = entrate.reduce((acc, m) => acc + parseFloat(m.totale || 0), 0);
+        const totaleUscite = uscite.reduce((acc, m) => acc + parseFloat(m.totale || 0), 0);
+        const saldo = totaleEntrate - totaleUscite;
+        riepilogo.innerHTML = `
+          <p><strong>Totale Entrate:</strong> € ${totaleEntrate.toFixed(2)}</p>
+          <p><strong>Totale Uscite:</strong> € ${totaleUscite.toFixed(2)}</p>
+          <p><strong>Saldo:</strong> € ${saldo.toFixed(2)}</p>
+        `;
+        mesi.forEach(m => {
+          const nome = m.charAt(0).toUpperCase() + m.slice(1).replace(/([a-z]+)(\d+)/, "$1 $2");
+          const btn = document.createElement("button");
+          btn.textContent = nome;
+          btn.onclick = () => location.href = `mese.html?mese=${m}`;
+          listaMesi.appendChild(btn);
+        });
+      })
+      .catch(() => {
+        riepilogo.innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+      });
+  </script>
+  <script src="js/contabilita.js"></script>
+</body>
+</html>
