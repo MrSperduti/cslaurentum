@@ -43,7 +43,8 @@ fetch("dati/contabilita.json")
         const [anno, mese, giorno] = m.data.split("-");
         dataFormatted = `${giorno}-${mese}-${anno}`;
         meseNome = mesi[mese] ? `${mesi[mese]} ${anno}` : "";
-        const pagina = `${mesi[mese].toLowerCase()}-${anno}.html`;
+        const meseQuery = mesi[mese].toLowerCase() + anno;
+        const pagina = `mese.html?mese=${meseQuery}`; `${mesi[mese].toLowerCase()}-${anno}.html`;
         link = `<a href='${pagina}'>📄</a>`;
       }
 
