@@ -2,13 +2,16 @@
 let giocatori = [];
 let contabilita = [];
 
+let modificaGiocatoreIndex = null;
+let modificaContabilita = { tipo: null, index: null };
+
 document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
   const reader = new FileReader();
   reader.onload = function() {
     try {
       giocatori = JSON.parse(reader.result);
-      document.getElementById('anteprimaGiocatori').textContent = JSON.stringify(giocatori, null, 2);
-      aggiornaElencoGiocatori();
+      aggiornaAnteprima();
+      mostraTabellaGiocatori();
     } catch (err) {
       alert("Errore nel file giocatori.json");
     }
@@ -21,8 +24,8 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   reader.onload = function() {
     try {
       contabilita = JSON.parse(reader.result);
-      document.getElementById('anteprimaContabilita').textContent = JSON.stringify(contabilita, null, 2);
-      aggiornaElencoContabilita();
+      aggiornaAnteprima();
+      mostraTabellaContabilita();
     } catch (err) {
       alert("Errore nel file contabilita.json");
     }
@@ -32,48 +35,147 @@ document.getElementById("caricaContabilita").addEventListener("change", function
 
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form).entries());
-  giocatori.push(data);
-  aggiornaElencoGiocatori();
-  form.reset();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  if (modificaGiocatoreIndex !== null) {
+    giocatori[modificaGiocatoreIndex] = data;
+    modificaGiocatoreIndex = null;
+  } else {
+    giocatori.push(data);
+  }
+  aggiornaAnteprima();
+  mostraTabellaGiocatori();
+  e.target.reset();
 });
 
 document.getElementById("movimentoForm").addEventListener("submit", function(e) {
   e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form).entries());
+  const data = Object.fromEntries(new FormData(e.target).entries());
+
+  if (!contabilita || Array.isArray(contabilita)) {
+    contabilita = { Entrata: [], Uscita: [] };
+  }
   if (!contabilita[data.tipo]) contabilita[data.tipo] = [];
-  contabilita[data.tipo].push(data);
-  aggiornaElencoContabilita();
-  form.reset();
+
+  if (modificaContabilita && modificaContabilita.index !== null && modificaContabilita.tipo === data.tipo) {
+    contabilita[data.tipo][modificaContabilita.index] = data;
+    modificaContabilita = { tipo: null, index: null };
+  } else {
+    contabilita[data.tipo].push(data);
+  }
+
+  aggiornaAnteprima();
+  mostraTabellaContabilita();
+  e.target.reset();
 });
 
-function aggiornaElencoGiocatori() {
-  const lista = document.getElementById("listaGiocatori");
-  lista.innerHTML = "";
+function mostraTabellaGiocatori() {
+  const div = document.getElementById("listaGiocatori");
+  div.innerHTML = "";
+  if (giocatori.length === 0) return;
+
+  const table = document.createElement("table");
+  table.innerHTML = "<thead><tr>" + Object.keys(giocatori[0]).map(k => `<th>${k}</th>`).join("") + "<th>Azioni</th></tr></thead>";
+  const tbody = document.createElement("tbody");
+
   giocatori.forEach((g, i) => {
-    const div = document.createElement("div");
-    div.textContent = `${g.nome} ${g.cognome} (${g.categoria})`;
-    lista.appendChild(div);
+    const tr = document.createElement("tr");
+    Object.values(g).forEach(v => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+
+    const tdAzioni = document.createElement("td");
+    const btnMod = document.createElement("button");
+    btnMod.textContent = "Modifica";
+    btnMod.onclick = () => modificaGiocatore(i);
+
+    const btnDel = document.createElement("button");
+    btnDel.textContent = "Elimina";
+    btnDel.onclick = () => {
+      giocatori.splice(i, 1);
+      aggiornaAnteprima();
+      mostraTabellaGiocatori();
+    };
+
+    tdAzioni.appendChild(btnMod);
+    tdAzioni.appendChild(btnDel);
+    tr.appendChild(tdAzioni);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  div.appendChild(table);
+}
+
+function mostraTabellaContabilita() {
+  const div = document.getElementById("listaContabilita");
+  div.innerHTML = "";
+
+  ["Entrata", "Uscita"].forEach(tipo => {
+    if (!contabilita[tipo] || contabilita[tipo].length === 0) return;
+
+    const h3 = document.createElement("h3");
+    h3.textContent = tipo;
+    div.appendChild(h3);
+
+    const table = document.createElement("table");
+    table.innerHTML = "<thead><tr>" + Object.keys(contabilita[tipo][0]).map(k => `<th>${k}</th>`).join("") + "<th>Azioni</th></tr></thead>";
+    const tbody = document.createElement("tbody");
+
+    contabilita[tipo].forEach((m, i) => {
+      const tr = document.createElement("tr");
+      Object.values(m).forEach(v => {
+        const td = document.createElement("td");
+        td.textContent = v;
+        tr.appendChild(td);
+      });
+
+      const tdAzioni = document.createElement("td");
+      const btnMod = document.createElement("button");
+      btnMod.textContent = "Modifica";
+      btnMod.onclick = () => modificaMovimento(tipo, i);
+
+      const btnDel = document.createElement("button");
+      btnDel.textContent = "Elimina";
+      btnDel.onclick = () => {
+        contabilita[tipo].splice(i, 1);
+        aggiornaAnteprima();
+        mostraTabellaContabilita();
+      };
+
+      tdAzioni.appendChild(btnMod);
+      tdAzioni.appendChild(btnDel);
+      tr.appendChild(tdAzioni);
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    div.appendChild(table);
   });
 }
 
-function aggiornaElencoContabilita() {
-  const lista = document.getElementById("listaContabilita");
-  lista.innerHTML = "";
-  const tipi = ["Entrata", "Uscita"];
-  tipi.forEach(tipo => {
-    if (!contabilita[tipo]) return;
-    const titolo = document.createElement("h3");
-    titolo.textContent = tipo;
-    lista.appendChild(titolo);
-    contabilita[tipo].forEach((m, i) => {
-      const div = document.createElement("div");
-      div.textContent = `${m.data} - ${m.descrizione} - €${m.totale} (${m.note})`;
-      lista.appendChild(div);
-    });
+function modificaGiocatore(i) {
+  const form = document.getElementById("giocatoreForm");
+  Object.entries(giocatori[i]).forEach(([k, v]) => {
+    if (form[k]) form[k].value = v;
   });
+  modificaGiocatoreIndex = i;
+  window.scrollTo(0, form.offsetTop);
+}
+
+function modificaMovimento(tipo, i) {
+  const form = document.getElementById("movimentoForm");
+  Object.entries(contabilita[tipo][i]).forEach(([k, v]) => {
+    if (form[k]) form[k].value = v;
+  });
+  modificaContabilita = { tipo: tipo, index: i };
+  window.scrollTo(0, form.offsetTop);
+}
+
+function aggiornaAnteprima() {
+  document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
+  document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
 }
 
 function scaricaGiocatori() {
@@ -92,13 +194,22 @@ function scaricaContabilita() {
   link.click();
 }
 
-if (document.getElementById("anteprimaGiocatori")) {
-  document.getElementById("giocatoreForm").addEventListener("submit", () => {
-    document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
-  });
+function apriRepoGitHub() {
+  const repoUrl = "https://github.com/MrSperduti/cslaurentum";
+  window.open(repoUrl, "_blank");
 }
-if (document.getElementById("anteprimaContabilita")) {
-  document.getElementById("movimentoForm").addEventListener("submit", () => {
-    document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
+
+
+
+function ordinaPerCampo(campo) {
+  giocatori.sort((a, b) => {
+    let valA = a[campo] || "";
+    let valB = b[campo] || "";
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return Number(valA) - Number(valB);
+    }
+    return valA.localeCompare(valB);
   });
+  mostraTabellaGiocatori();
+  aggiornaAnteprima();
 }

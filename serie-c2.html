@@ -18,14 +18,12 @@
       .then(res => res.json())
       .then(giocatori => {
         const elenco = document.getElementById("elencoGiocatori");
-        const filtrati = giocatori.filter(g => g.categoria === "Serie C2");
-        if (filtrati.length === 0) {
-          elenco.innerHTML = "<p>Nessun giocatore presente.</p>";
-          return;
-        }
-        filtrati.forEach((g, i) => {
-          const div = document.createElement("div");
-          div.innerHTML = `<p><a href="giocatore.html?id=${i}">${g.nome} ${g.cognome}</a></p>`;
+        giocatori.forEach((g, index) => {
+  if (g.categoria === "Serie C2") {
+    const div = document.createElement("div");
+    div.innerHTML = `<p><a href="giocatore.html?id=${index}">${g.nome} ${g.cognome}</a></p>`;
+    elenco.appendChild(div);
+  }">${g.nome} ${g.cognome}</a></p>`;
           elenco.appendChild(div);
         });
       });

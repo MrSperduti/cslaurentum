@@ -88,3 +88,42 @@ button:hover {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #99c2ff;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background-color: #e6f0ff;
+  font-weight: bold;
+}
+
+td:last-child {
+  display: flex;
+  gap: 10px;
+}
+
+td button {
+  padding: 6px 12px;
+  font-size: 14px;
+  flex: 1;
+}
+
+
+.container {
+  max-width: 98%;
+}
+
+table {
+  font-size: 13px;
+}
