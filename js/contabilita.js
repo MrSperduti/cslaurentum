@@ -2,77 +2,38 @@
 fetch("dati/contabilita.json")
   .then(res => res.json())
   .then(data => {
-    let movimenti = [];
+    const params = new URLSearchParams(window.location.search);
+    const meseRichiesto = params.get("mese");
+    const meseMap = {
+      gennaio: "01", febbraio: "02", marzo: "03", aprile: "04",
+      maggio: "05", giugno: "06", luglio: "07", agosto: "08",
+      settembre: "09", ottobre: "10", novembre: "11", dicembre: "12"
+    };
 
-    if (Array.isArray(data)) {
-      movimenti = data;
-    } else {
-      ["Entrata", "Uscita"].forEach(tipo => {
-        if (Array.isArray(data[tipo])) {
-          data[tipo].forEach(m => movimenti.push({ ...m, tipo }));
-        }
-      });
-    }
+    const meseNome = meseRichiesto.slice(0, -4);  // es. luglio
+    const anno = meseRichiesto.slice(-4); // es. 2025
+    const meseNumerico = meseMap[meseNome.toLowerCase()];
 
-    movimenti.sort((a, b) => (a.data || "").localeCompare(b.data));
+    if (!meseNumerico) return;
 
-    const container = document.getElementById("tabellaCompleta");
-    if (!container) return;
-
-    if (movimenti.length === 0) {
-      container.innerHTML = "<p>Nessun movimento disponibile.</p>";
-      return;
-    }
-
-    let totaleEntrate = 0;
-    let totaleUscite = 0;
-
-    const table = document.createElement("table");
-    const intestazioni = ["Tipo", "Data", "Descrizione", "Totale", "Note", "Mese", "Vai"];
-    table.innerHTML = "<thead><tr>" + intestazioni.map(c => `<th>${c}</th>`).join("") + "</tr></thead>";
-
-    const tbody = document.createElement("tbody");
-
-    const mesi = {'01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre', '11': 'Novembre', '12': 'Dicembre'};
-
-    movimenti.forEach(m => {
-      let dataFormatted = m.data;
-      let meseNome = "";
-      let link = "";
-      if (m.data && m.data.length === 10) {
-        const [anno, mese, giorno] = m.data.split("-");
-        dataFormatted = `${giorno}-${mese}-${anno}`;
-        meseNome = mesi[mese] ? `${mesi[mese]} ${anno}` : "";
-        const meseQuery = mesi[mese].toLowerCase() + anno;
-        const pagina = `mese.html?mese=${meseQuery}`; `${mesi[mese].toLowerCase()}-${anno}.html`;
-        link = `<a href='${pagina}'>📄</a>`;
-      }
-
-      const importo = parseFloat(m.totale || "0");
-      if (m.tipo === "Entrata") totaleEntrate += importo;
-      else if (m.tipo === "Uscita") totaleUscite += importo;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${m.tipo || ""}</td>
-        <td>${dataFormatted}</td>
-        <td>${m.descrizione || ""}</td>
-        <td>${m.totale || ""}</td>
-        <td>${m.note || ""}</td>
-        <td>${meseNome}</td>
-        <td>${link}</td>`;
-      tbody.appendChild(tr);
+    const filtrati = data.filter(m => {
+      const [y, mth, d] = m.data.split("-");
+      return y === anno && mth === meseNumerico;
     });
 
-    table.appendChild(tbody);
+    const divEntrate = document.getElementById("tabellaEntrate");
+    const divUscite = document.getElementById("tabellaUscite");
 
-    const riepilogo = document.createElement("div");
-    riepilogo.innerHTML = `
-      <p><strong>Totale Entrate:</strong> € ${totaleEntrate.toFixed(2)}</p>
-      <p><strong>Totale Uscite:</strong> € ${totaleUscite.toFixed(2)}</p>
-      <p><strong>Saldo:</strong> € ${(totaleEntrate - totaleUscite).toFixed(2)}</p>
-    `;
+    function generaTabella(lista) {
+      if (lista.length === 0) return "<p>Nessun movimento.</p>";
+      let html = "<table><thead><tr><th>Data</th><th>Descrizione</th><th>Totale</th><th>Note</th></tr></thead><tbody>";
+      lista.forEach(m => {
+        html += `<tr><td>${m.data || ""}</td><td>${m.descrizione || ""}</td><td>${m.totale || ""}</td><td>${m.note || ""}</td></tr>`;
+      });
+      html += "</tbody></table>";
+      return html;
+    }
 
-    container.appendChild(riepilogo);
-    container.appendChild(table);
+    divEntrate.innerHTML = generaTabella(filtrati.filter(m => m.tipo === "Entrata"));
+    divUscite.innerHTML = generaTabella(filtrati.filter(m => m.tipo === "Uscita"));
   });
