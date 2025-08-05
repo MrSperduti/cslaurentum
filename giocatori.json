@@ -1,0 +1,16 @@
+[
+  {
+    "nome": "LORENZO",
+    "cognome": "RELUCENTI",
+    "dataNascita": "2002-03-21",
+    "indirizzo": "via padova",
+    "telefono": "33333333",
+    "documento": "ak343546576",
+    "matricola": "1232432354",
+    "taglia": "L",
+    "maglia": "13",
+    "visitaMedica": "Si",
+    "scadenza": "2026-09-11",
+    "categoria": "Serie C2"
+  }
+]

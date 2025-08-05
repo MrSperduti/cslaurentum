@@ -1,0 +1,129 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #ffffff, #cce0ff);
+  color: #003366;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.88);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.2);
+  margin-top: 30px;
+}
+
+h1, h2 {
+  color: #00264d;
+  margin-bottom: 15px;
+}
+
+form label {
+  display: block;
+  margin: 10px 0;
+  text-align: left;
+  font-weight: 500;
+}
+
+form input, form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  background: linear-gradient(to right, #004080, #0073e6);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 15px auto;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  max-width: 400px;
+}
+
+button:hover {
+  background: linear-gradient(to right, #003366, #0059b3);
+}
+
+#listaGiocatori div, #listaContabilita div {
+  padding: 10px;
+  border-bottom: 1px solid #99c2ff;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+  form input, form select {
+    font-size: 15px;
+    padding: 8px;
+  }
+}
+
+
+.json-preview {
+  background-color: #f0f8ff;
+  border: 1px solid #99c2ff;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 14px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #99c2ff;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background-color: #e6f0ff;
+  font-weight: bold;
+}
+
+td:last-child {
+  display: flex;
+  gap: 10px;
+}
+
+td button {
+  padding: 6px 12px;
+  font-size: 14px;
+  flex: 1;
+}
+
+
+.container {
+  max-width: 98%;
+}
+
+table {
+  font-size: 13px;
+}

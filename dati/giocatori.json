@@ -1,0 +1,44 @@
+[
+  {
+    "nome": "LORENZO",
+    "cognome": "RELUCENTI",
+    "dataNascita": "2002-03-21",
+    "indirizzo": "via padova",
+    "telefono": "33333333",
+    "documento": "ak343546576",
+    "matricola": "1232432354",
+    "taglia": "L",
+    "maglia": "13",
+    "visitaMedica": "Si",
+    "scadenza": "2026-09-11",
+    "categoria": "Serie C2"
+  },
+  {
+    "nome": "ALESSANDRO",
+    "cognome": "MONGIOVI",
+    "dataNascita": "2002-12-13",
+    "indirizzo": "via pinco pallino",
+    "telefono": "324564345",
+    "documento": "as563656rgsrg5",
+    "matricola": "safetsv4",
+    "taglia": "L",
+    "maglia": "10",
+    "visitaMedica": "Si",
+    "scadenza": "2026-09-12",
+    "categoria": "Serie C2"
+  },
+  {
+    "nome": "Emanuele",
+    "cognome": "Bufano",
+    "dataNascita": "2005-05-04",
+    "indirizzo": "via terni",
+    "telefono": "12121212121",
+    "documento": "sfadsvbdfngfh",
+    "matricola": "dzvsgbdfb df",
+    "taglia": "L",
+    "maglia": "88",
+    "visitaMedica": "Si",
+    "scadenza": "2026-09-19",
+    "categoria": "Under 21"
+  }
+]

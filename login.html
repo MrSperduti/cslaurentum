@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Admin</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Accesso Amministratore</h1>
+    <form id="loginForm">
+      <label>Password:
+        <input type="password" id="password" required />
+      </label>
+      <button type="submit">Accedi</button>
+    </form>
+    <p id="errore" style="color: red;"></p>
+  </div>
+
+  <script>
+    const passwordCorretta = "laurentum2025"; // Cambia qui la password
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const pass = document.getElementById("password").value;
+      if (pass === passwordCorretta) {
+        sessionStorage.setItem("admin", "ok");
+        location.href = "editor.html";
+      } else {
+        document.getElementById("errore").textContent = "Password errata";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Giocatori Serie C2</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Giocatori Serie C2</h1>
+    <div id="elencoGiocatori"></div>
+    <button onclick="location.href='index.html'">Torna alla Home</button>
+  </div>
+  <script>
+fetch('dati/giocatori.json')
+  .then(res => res.json())
+  .then(giocatori => {
+    const elenco = document.getElementById("elencoGiocatori");
+    const filtrati = giocatori
+      .map((g, i) => { return {...g, index: i}; })
+      .filter(g => g.categoria === "Serie C2")
+      .sort((a, b) => a.nome.localeCompare(b.nome));
+
+    if (filtrati.length === 0) {
+      elenco.innerHTML = "<p>Nessun giocatore presente.</p>";
+      return;
+    }
+
+    filtrati.forEach(g => {
+      const div = document.createElement("div");
+      div.innerHTML = `<p><a href="giocatore.html?id=${g.index}">${g.nome} ${g.cognome}</a></p>`;
+      elenco.appendChild(div);
+    });
+  });
+</script>
+</body>
+</html>
