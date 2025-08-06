@@ -9,35 +9,19 @@
 <body>
   <div class="container">
     <h1>Contabilità</h1>
+    
+    <!-- Tabella completa con movimenti -->
     <div id="tabellaCompleta"></div>
+
+    <!-- Riepilogo totale entrate, uscite e saldo -->
     <div id="riepilogo">
       <p>Caricamento dati...</p>
     </div>
-    <!-- RIMOSSI I BOTTONI DEI MESI -->
+
     <button onclick="location.href='index.html'">Torna alla Home</button>
   </div>
-  <script>
-    const riepilogo = document.getElementById("riepilogo");
 
-    fetch("dati/contabilita.json")
-      .then(res => res.json())
-      .then(data => {
-        const entrate = data.Entrata || [];
-        const uscite = data.Uscita || [];
-        const totaleEntrate = entrate.reduce((acc, m) => acc + parseFloat(m.totale || 0), 0);
-        const totaleUscite = uscite.reduce((acc, m) => acc + parseFloat(m.totale || 0), 0);
-        const saldo = totaleEntrate - totaleUscite;
-        riepilogo.innerHTML = `
-          <p><strong>Totale Entrate:</strong> € ${totaleEntrate.toFixed(2)}</p>
-          <p><strong>Totale Uscite:</strong> € ${totaleUscite.toFixed(2)}</p>
-          <p><strong>Saldo:</strong> € ${saldo.toFixed(2)}</p>
-        `;
-        // Bottoni dei mesi rimossi
-      })
-      .catch(() => {
-        riepilogo.innerHTML = "<p>Errore nel caricamento dei dati.</p>";
-      });
-  </script>
+  <!-- Script che popola la tabella -->
   <script src="js/contabilita.js"></script>
 </body>
 </html>
