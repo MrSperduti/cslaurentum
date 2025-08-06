@@ -1,60 +1,98 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contabilità Mensile</title>
+  <title>Movimenti mensili</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Contabilità del mese</h1>
-    <div id="meseTitolo"></div>
-    <h2>Entrate</h2>
-    <table id="tabellaEntrate">
-      <tr><th>Data</th><th>Descrizione</th><th>Totale</th><th>Note</th></tr>
-    </table>
-    <h2>Uscite</h2>
-    <table id="tabellaUscite">
-      <tr><th>Data</th><th>Descrizione</th><th>Totale</th><th>Note</th></tr>
-    </table>
-    <button onclick="window.history.back()">Torna Indietro</button>
-    <button onclick="location.href='index.html'">Torna alla Home</button>
+    <h1 id="titoloMese">Movimenti del mese</h1>
+    <div id="riepilogoMese"></div>
+    <div id="tabellaMese"></div>
+    <button onclick="window.history.back()">⬅️ Torna indietro</button>
   </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const mese = urlParams.get("mese");
-    const titolo = document.getElementById("meseTitolo");
-    const entrateTable = document.getElementById("tabellaEntrate");
-    const usciteTable = document.getElementById("tabellaUscite");
+    const meseParam = urlParams.get("mese"); // es. luglio2025
 
-    const meseNome = mese ? mese.replace(/([a-z]+)(\d+)/, function(_, m, y) {
-      return m.charAt(0).toUpperCase() + m.slice(1) + " " + y;
-    }) : "";
+    const mesi = {
+      'gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04',
+      'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08',
+      'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12'
+    };
 
-    titolo.innerHTML = "<h2>" + meseNome + "</h2>";
+    if (!meseParam) {
+      document.getElementById("tabellaMese").innerHTML = "<p>Mese non specificato.</p>";
+    } else {
+      const nomeMese = meseParam.replace(/(\D+)(\d{4})/, "$1 $2");
+      document.getElementById("titoloMese").textContent = "Movimenti di " + nomeMese.charAt(0).toUpperCase() + nomeMese.slice(1);
 
-    fetch("dati/contabilita.json")
-      .then(res => res.json())
-      .then(data => {
-        const entrate = data.Entrata || [];
-        const uscite = data.Uscita || [];
+      fetch("dati/contabilita.json")
+        .then(res => res.json())
+        .then(data => {
+          let movimenti = [];
 
-        const entrateMese = entrate.filter(e => e.data && e.data.includes(mese));
-        const usciteMese = uscite.filter(u => u.data && u.data.includes(mese));
+          ["Entrata", "Uscita"].forEach(tipo => {
+            if (Array.isArray(data[tipo])) {
+              data[tipo].forEach(m => movimenti.push({ ...m, tipo }));
+            }
+          });
 
-        entrateMese.forEach(e => {
-          const row = entrateTable.insertRow();
-          row.innerHTML = `<td>${e.data}</td><td>${e.descrizione}</td><td>€ ${e.totale}</td><td>${e.note}</td>`;
+          const [meseTxt, anno] = meseParam.match(/([a-z]+)(\d{4})/).slice(1);
+          const meseNum = mesi[meseTxt.toLowerCase()];
+
+          const filtrati = movimenti.filter(m => m.data && m.data.startsWith(`${anno}-${meseNum}`));
+          filtrati.sort((a, b) => (a.data || "").localeCompare(b.data));
+
+          let totaleEntrate = 0;
+          let totaleUscite = 0;
+
+          const table = document.createElement("table");
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Descrizione</th>
+                <th>Totale</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+          `;
+          const tbody = document.createElement("tbody");
+
+          filtrati.forEach(m => {
+            const importo = parseFloat(m.totale || "0");
+            if (m.tipo === "Entrata") totaleEntrate += importo;
+            else if (m.tipo === "Uscita") totaleUscite += importo;
+
+            const [anno, mese, giorno] = m.data.split("-");
+            const dataFormatted = `${giorno}-${mese}-${anno}`;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${m.tipo}</td>
+              <td>${dataFormatted}</td>
+              <td>${m.descrizione}</td>
+              <td>${m.totale}</td>
+              <td>${m.note || ""}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          table.appendChild(tbody);
+          document.getElementById("tabellaMese").appendChild(table);
+
+          document.getElementById("riepilogoMese").innerHTML = `
+            <p><strong>Totale Entrate:</strong> € ${totaleEntrate.toFixed(2)}</p>
+            <p><strong>Totale Uscite:</strong> € ${totaleUscite.toFixed(2)}</p>
+            <p><strong>Saldo Mensile:</strong> € ${(totaleEntrate - totaleUscite).toFixed(2)}</p>
+          `;
         });
-
-        usciteMese.forEach(u => {
-          const row = usciteTable.insertRow();
-          row.innerHTML = `<td>${u.data}</td><td>${u.descrizione}</td><td>€ ${u.totale}</td><td>${u.note}</td>`;
-        });
-      });
+    }
   </script>
 </body>
 </html>
