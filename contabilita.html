@@ -5,23 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Contabilità - CS LAURENTUM</title>
   <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>Contabilità</h1>
-    
-    <!-- Tabella completa con movimenti -->
-    <div id="tabellaCompleta"></div>
 
-    <!-- Riepilogo totale entrate, uscite e saldo -->
-    <div id="riepilogo">
-      <p>Caricamento dati...</p>
+    <!-- 🔎 Filtri -->
+    <div class="filtri">
+      <input type="text" id="searchInput" placeholder="Cerca descrizione o note..." />
+      <select id="tipoFiltro">
+        <option value="">Tutti i tipi</option>
+        <option value="Entrata">Entrata</option>
+        <option value="Uscita">Uscita</option>
+      </select>
+      <input type="month" id="meseFiltro" />
+      <button onclick="esportaExcel()">📤 Excel</button>
+      <button onclick="esportaPDF()">📄 PDF</button>
     </div>
 
+    <!-- 💰 Riepilogo -->
+    <div id="riepilogo" class="totali"></div>
+
+    <!-- 📊 Grafico -->
+    <div id="graficoContainer">
+      <canvas id="graficoMensile"></canvas>
+    </div>
+
+    <!-- 📋 Tabella Movimenti -->
+    <div id="tabellaCompleta"></div>
+
+    <!-- 🔙 Torna alla Home -->
     <button onclick="location.href='index.html'">Torna alla Home</button>
   </div>
 
-  <!-- Script che popola la tabella -->
+  <!-- ⚙️ Script -->
   <script src="js/contabilita.js"></script>
 </body>
 </html>
