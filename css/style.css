@@ -1,129 +1,94 @@
-
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to bottom, #ffffff, #cce0ff);
+  background: linear-gradient(to bottom, #ffffff, #e6f0ff);
   color: #003366;
 }
 
 .container {
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: 20px auto;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.88);
+  background-color: white;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.2);
-  margin-top: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
+h1 {
   color: #00264d;
-  margin-bottom: 15px;
-}
-
-form label {
-  display: block;
-  margin: 10px 0;
-  text-align: left;
-  font-weight: 500;
-}
-
-form input, form select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  box-sizing: border-box;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 button {
   background: linear-gradient(to right, #004080, #0073e6);
   color: white;
   border: none;
-  padding: 12px 25px;
-  margin: 15px auto;
-  font-size: 18px;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
-  display: block;
-  width: 100%;
-  max-width: 400px;
 }
 
 button:hover {
   background: linear-gradient(to right, #003366, #0059b3);
 }
 
-#listaGiocatori div, #listaContabilita div {
-  padding: 10px;
-  border-bottom: 1px solid #99c2ff;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
-  button {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
-  form input, form select {
-    font-size: 15px;
-    padding: 8px;
-  }
-}
-
-
-.json-preview {
-  background-color: #f0f8ff;
-  border: 1px solid #99c2ff;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px 0;
-  font-size: 14px;
-  text-align: left;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  table-layout: fixed;
 }
 
-th, td {
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #004080;
+  color: white;
   padding: 10px;
-  border: 1px solid #99c2ff;
-  text-align: left;
-  font-size: 14px;
+  z-index: 1;
 }
 
-th {
-  background-color: #e6f0ff;
+tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #cce0ff;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f8ff;
+}
+
+tbody tr:hover {
+  background-color: #e0ecff;
+}
+
+.totali p {
   font-weight: bold;
+  font-size: 16px;
+  margin: 5px 0;
 }
 
-td:last-child {
+.totali .entrate { color: green; }
+.totali .uscite { color: red; }
+.totali .saldo  { color: #003366; }
+
+.filtri {
+  margin: 20px 0;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-td button {
-  padding: 6px 12px;
-  font-size: 14px;
-  flex: 1;
+.filtri input, .filtri select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-
-.container {
-  max-width: 98%;
-}
-
-table {
-  font-size: 13px;
+#graficoContainer {
+  max-width: 600px;
+  margin: 30px auto;
 }
