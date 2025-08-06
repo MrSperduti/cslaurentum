@@ -40,5 +40,19 @@
     "visitaMedica": "Si",
     "scadenza": "2026-09-19",
     "categoria": "Under 21"
+  },
+  {
+    "nome": "Niccolo",
+    "cognome": "Borozan",
+    "dataNascita": "2005-06-06",
+    "indirizzo": "",
+    "telefono": "",
+    "documento": "",
+    "matricola": "L",
+    "taglia": "",
+    "maglia": "",
+    "visitaMedica": "No",
+    "scadenza": "",
+    "categoria": "Under 21"
   }
 ]
