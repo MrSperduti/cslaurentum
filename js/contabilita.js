@@ -1,4 +1,3 @@
-
 fetch("dati/contabilita.json")
   .then(res => res.json())
   .then(data => {
@@ -33,18 +32,23 @@ fetch("dati/contabilita.json")
 
     const tbody = document.createElement("tbody");
 
-    const mesi = {'01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre', '11': 'Novembre', '12': 'Dicembre'};
+    const mesi = {
+      '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile',
+      '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto',
+      '09': 'Settembre', '10': 'Ottobre', '11': 'Novembre', '12': 'Dicembre'
+    };
 
     movimenti.forEach(m => {
       let dataFormatted = m.data;
       let meseNome = "";
       let link = "";
+
       if (m.data && m.data.length === 10) {
         const [anno, mese, giorno] = m.data.split("-");
         dataFormatted = `${giorno}-${mese}-${anno}`;
         meseNome = mesi[mese] ? `${mesi[mese]} ${anno}` : "";
-        const pagina = `${mesi[mese].toLowerCase()}-${anno}.html`;
-        link = `<a href='${pagina}'>📄</a>`;
+        const param = `${mesi[mese].toLowerCase()}${anno}`; // es. luglio2025
+        link = `<a href="mese.html?mese=${param}">📄</a>`;
       }
 
       const importo = parseFloat(m.totale || "0");
@@ -59,7 +63,8 @@ fetch("dati/contabilita.json")
         <td>${m.totale || ""}</td>
         <td>${m.note || ""}</td>
         <td>${meseNome}</td>
-        <td>${link}</td>`;
+        <td>${link}</td>
+      `;
       tbody.appendChild(tr);
     });
 
