@@ -34,5 +34,39 @@
     <button onclick="location.href='contabilita.html'">Contabilità</button>
     <button onclick="location.href='editor.html'">Editor (Admin)</button>
   </div>
+
+  <!-- Aggiunta di un prompt personalizzato per "Aggiungi alla schermata principale" -->
+  <script>
+    let deferredPrompt;
+    const addBtn = document.getElementById('add-to-home-screen');
+
+    // Ascolta l'evento beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Preveniamo il comportamento predefinito (che nasconderebbe il prompt)
+      e.preventDefault();
+      // Salviamo l'evento per usarlo più tardi
+      deferredPrompt = e;
+      // Mostriamo il pulsante personalizzato per aggiungere alla schermata principale
+      addBtn.style.display = 'block';
+
+      // Quando l'utente clicca il pulsante
+      addBtn.addEventListener('click', () => {
+        // Mostriamo il prompt
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('L\'utente ha aggiunto l\'app alla schermata principale');
+          } else {
+            console.log('L\'utente ha rifiutato di aggiungere l\'app');
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+  </script>
+
+  <!-- Pulsante personalizzato per "Aggiungi alla schermata principale" -->
+  <button id="add-to-home-screen" style="display:none;">Aggiungi alla schermata principale</button>
 </body>
 </html>
+``
