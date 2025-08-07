@@ -2,26 +2,47 @@
   "Entrata": [
     {
       "tipo": "Entrata",
-      "data": "2025-07-28",
-      "descrizione": "sponsorizzazione Locar",
-      "totale": "1700",
+      "data": "2025-07-21",
+      "descrizione": "Sponsorizzazione Locar",
+      "totale": "1700.00",
       "note": "bonifico"
+    },
+    {
+      "tipo": "Entrata",
+      "data": "2025-07-14",
+      "descrizione": "Sponsorizzazione Locar",
+      "totale": "177.00",
+      "note": "Casetta+segnapunti"
     }
   ],
   "Uscita": [
     {
       "tipo": "Uscita",
-      "data": "2025-07-23",
-      "descrizione": "palloni",
-      "totale": "140",
-      "note": "contanti SPORTEK"
+      "data": "2025-07-15",
+      "descrizione": "Materiale tecnico",
+      "totale": "270.00",
+      "note": "contanti acquisto su AMAZON"
     },
     {
       "tipo": "Uscita",
-      "data": "2025-08-01",
-      "descrizione": "materiale tecnico",
-      "totale": "300",
-      "note": "contanti acquisto su AMAZON"
+      "data": "2025-07-14",
+      "descrizione": "Segnapunti",
+      "totale": "27.00",
+      "note": ""
+    },
+    {
+      "tipo": "Uscita",
+      "data": "2025-07-14",
+      "descrizione": "Casetta",
+      "totale": "150.00",
+      "note": ""
+    },
+    {
+      "tipo": "Uscita",
+      "data": "2025-07-22",
+      "descrizione": "Iscrizione C2",
+      "totale": "1670.00",
+      "note": ""
     }
   ]
 }
