@@ -39,16 +39,24 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
   
-  // Se un documento è stato caricato, gestiamo il file del certificato medico
+  // Gestione del caricamento della foto
+  const fotoInput = e.target.querySelector('input[name="foto"]');
+  if (fotoInput.files.length > 0) {
+    const fotoFile = fotoInput.files[0];
+    // Salviamo solo il nome del file della foto
+    data.foto = fotoFile.name;
+  }
+
+  // Gestione del caricamento del certificato medico (già esistente)
   const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
-    // Salviamo solo il nome del file, il file sarà caricato separatamente (su GitHub o server)
     data.certificatoMedico = certificatoFile.name;
   }
 
-  // Se si sta modificando un giocatore esistente
+  // Verifica se stiamo modificando un giocatore esistente
   if (modificaGiocatoreIndex !== null) {
+    // Se il giocatore è già esistente, aggiorniamo i suoi dati
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
   } else {
@@ -58,29 +66,6 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
 
   aggiornaAnteprima();
   mostraTabellaGiocatori();
-  e.target.reset(); // Reset del form dopo l'invio
-});
-
-// Gestione del submit per la contabilità
-document.getElementById("movimentoForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(e.target).entries());
-
-  if (!contabilita || Array.isArray(contabilita)) {
-    contabilita = { Entrata: [], Uscita: [] };
-  }
-  if (!contabilita[data.tipo]) contabilita[data.tipo] = [];
-
-  // Modifica o aggiunta di un movimento
-  if (modificaContabilita && modificaContabilita.index !== null && modificaContabilita.tipo === data.tipo) {
-    contabilita[data.tipo][modificaContabilita.index] = data;
-    modificaContabilita = { tipo: null, index: null };
-  } else {
-    contabilita[data.tipo].push(data);
-  }
-
-  aggiornaAnteprima();
-  mostraTabellaContabilita();
   e.target.reset(); // Reset del form dopo l'invio
 });
 
