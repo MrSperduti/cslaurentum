@@ -32,10 +32,37 @@
         }
 
         // Costruzione dell'HTML per visualizzare i dati del giocatore
-        const html = `
+        let html = `
           <p><strong>Nome:</strong> ${giocatore.nome}</p>
           <p><strong>Cognome:</strong> ${giocatore.cognome}</p>
           <p><strong>Data di nascita:</strong> ${giocatore.dataNascita}</p>
           <p><strong>Indirizzo:</strong> ${giocatore.indirizzo}</p>
           <p><strong>Telefono:</strong> ${giocatore.telefono}</p>
-          <p><strong>Numero Documento:</strong> ${
+          <p><strong>Numero Documento:</strong> ${giocatore.documento}</p>
+          <p><strong>Matricola:</strong> ${giocatore.matricola}</p>
+          <p><strong>Taglia:</strong> ${giocatore.taglia}</p>
+          <p><strong>Numero Maglia:</strong> ${giocatore.maglia}</p>
+          <p><strong>Visita Medica:</strong> ${giocatore.visitaMedica}</p>
+          <p><strong>Scadenza Certificato:</strong> ${giocatore.scadenza}</p>
+          <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
+        `;
+
+        // Se la struttura JSON è la nuova, aggiungiamo il link per il certificato medico
+        if (giocatore.certificatoMedico) {
+          html += `
+            <p><strong>Certificato Medico:</strong> 
+            <a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatore.certificatoMedico}" download>Scarica Certificato Medico</a></p>
+          `;
+        } else {
+          // Se la struttura è vecchia e non c'è il campo certificatoMedico, non mostriamo il link
+          html += `<p>No certificato medico caricato.</p>`;
+        }
+
+        document.getElementById("datiGiocatore").innerHTML = html;
+      })
+      .catch(() => {
+        document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+      });
+  </script>
+</body>
+</html>
