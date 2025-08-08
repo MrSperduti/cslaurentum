@@ -4,6 +4,7 @@ let contabilita = [];
 let modificaGiocatoreIndex = null;
 let modificaContabilita = { tipo: null, index: null };
 
+// Caricamento del file JSON dei giocatori
 document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
   const reader = new FileReader();
   reader.onload = function() {
@@ -18,6 +19,7 @@ document.getElementById("caricaGiocatori").addEventListener("change", function(e
   reader.readAsText(e.target.files[0]);
 });
 
+// Caricamento del file JSON della contabilità
 document.getElementById("caricaContabilita").addEventListener("change", function(e) {
   const reader = new FileReader();
   reader.onload = function() {
@@ -32,29 +34,34 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   reader.readAsText(e.target.files[0]);
 });
 
+// Gestione del submit del form per l'aggiunta o modifica di un giocatore
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
   
-  // Se un documento è stato caricato, gestiamo il file
+  // Se un documento è stato caricato, gestiamo il file del certificato medico
   const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
-    // Per esempio, salviamo il nome del file nel JSON, il file dovrà essere gestito separatamente
+    // Salviamo solo il nome del file, il file sarà caricato separatamente (su GitHub o server)
     data.certificatoMedico = certificatoFile.name;
   }
 
+  // Se si sta modificando un giocatore esistente
   if (modificaGiocatoreIndex !== null) {
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
   } else {
+    // Aggiungiamo un nuovo giocatore
     giocatori.push(data);
   }
+
   aggiornaAnteprima();
   mostraTabellaGiocatori();
-  e.target.reset();
+  e.target.reset(); // Reset del form dopo l'invio
 });
 
+// Gestione del submit per la contabilità
 document.getElementById("movimentoForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
@@ -64,6 +71,7 @@ document.getElementById("movimentoForm").addEventListener("submit", function(e) 
   }
   if (!contabilita[data.tipo]) contabilita[data.tipo] = [];
 
+  // Modifica o aggiunta di un movimento
   if (modificaContabilita && modificaContabilita.index !== null && modificaContabilita.tipo === data.tipo) {
     contabilita[data.tipo][modificaContabilita.index] = data;
     modificaContabilita = { tipo: null, index: null };
@@ -73,9 +81,34 @@ document.getElementById("movimentoForm").addEventListener("submit", function(e) 
 
   aggiornaAnteprima();
   mostraTabellaContabilita();
-  e.target.reset();
+  e.target.reset(); // Reset del form dopo l'invio
 });
 
+// Funzione per aggiornare l'anteprima del file JSON dei giocatori
+function aggiornaAnteprima() {
+  document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
+  document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
+}
+
+// Funzione per scaricare il file JSON dei giocatori
+function scaricaGiocatori() {
+  const blob = new Blob([JSON.stringify(giocatori, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "giocatori.json";
+  link.click();
+}
+
+// Funzione per scaricare il file JSON della contabilità
+function scaricaContabilita() {
+  const blob = new Blob([JSON.stringify(contabilita, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "contabilita.json";
+  link.click();
+}
+
+// Funzione per mostrare la tabella dei giocatori
 function mostraTabellaGiocatori() {
   const div = document.getElementById("listaGiocatori");
   div.innerHTML = "";
@@ -116,53 +149,7 @@ function mostraTabellaGiocatori() {
   div.appendChild(table);
 }
 
-function mostraTabellaContabilita() {
-  const div = document.getElementById("listaContabilita");
-  div.innerHTML = "";
-
-  ["Entrata", "Uscita"].forEach(tipo => {
-    if (!contabilita[tipo] || contabilita[tipo].length === 0) return;
-
-    const h3 = document.createElement("h3");
-    h3.textContent = tipo;
-    div.appendChild(h3);
-
-    const table = document.createElement("table");
-    table.innerHTML = "<thead><tr>" + Object.keys(contabilita[tipo][0]).map(k => `<th>${k}</th>`).join("") + "<th>Azioni</th></tr></thead>";
-    const tbody = document.createElement("tbody");
-
-    contabilita[tipo].forEach((m, i) => {
-      const tr = document.createElement("tr");
-      Object.values(m).forEach(v => {
-        const td = document.createElement("td");
-        td.textContent = v;
-        tr.appendChild(td);
-      });
-
-      const tdAzioni = document.createElement("td");
-      const btnMod = document.createElement("button");
-      btnMod.textContent = "Modifica";
-      btnMod.onclick = () => modificaMovimento(tipo, i);
-
-      const btnDel = document.createElement("button");
-      btnDel.textContent = "Elimina";
-      btnDel.onclick = () => {
-        contabilita[tipo].splice(i, 1);
-        aggiornaAnteprima();
-        mostraTabellaContabilita();
-      };
-
-      tdAzioni.appendChild(btnMod);
-      tdAzioni.appendChild(btnDel);
-      tr.appendChild(tdAzioni);
-      tbody.appendChild(tr);
-    });
-
-    table.appendChild(tbody);
-    div.appendChild(table);
-  });
-}
-
+// Funzione per modificare un giocatore
 function modificaGiocatore(i) {
   const form = document.getElementById("giocatoreForm");
   Object.entries(giocatori[i]).forEach(([k, v]) => {
@@ -172,41 +159,7 @@ function modificaGiocatore(i) {
   window.scrollTo(0, form.offsetTop);
 }
 
-function modificaMovimento(tipo, i) {
-  const form = document.getElementById("movimentoForm");
-  Object.entries(contabilita[tipo][i]).forEach(([k, v]) => {
-    if (form[k]) form[k].value = v;
-  });
-  modificaContabilita = { tipo: tipo, index: i };
-  window.scrollTo(0, form.offsetTop);
-}
-
-function aggiornaAnteprima() {
-  document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
-  document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
-}
-
-function scaricaGiocatori() {
-  const blob = new Blob([JSON.stringify(giocatori, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "giocatori.json";
-  link.click();
-}
-
-function scaricaContabilita() {
-  const blob = new Blob([JSON.stringify(contabilita, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "contabilita.json";
-  link.click();
-}
-
-function apriRepoGitHub() {
-  const repoUrl = "https://github.com/MrSperduti/cslaurentum";
-  window.open(repoUrl, "_blank");
-}
-
+// Funzione per ordinare la tabella dei giocatori
 function ordinaPerCampo(campo) {
   giocatori.sort((a, b) => {
     let valA = a[campo] || "";
