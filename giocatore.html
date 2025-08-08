@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -10,32 +9,19 @@
 <body>
   <div class="container">
     <h1>Profilo Giocatore</h1>
-    
-        <div id="datiGiocatore">
-            <p><strong>Visita Medica:</strong> <span id="visitaMedicaLink"></span></p>
-        
+    <div id="datiGiocatore">
       <p>Caricamento in corso...</p>
     </div>
     <button onclick="window.history.back()">Torna Indietro</button>
     <button onclick="location.href='index.html'">Torna alla Home</button>
   </div>
 
-  
-        <script>
-            const giocatore = data[id];  // già presente nella pagina
-            const visitaMedicaLinkElement = document.getElementById("visitaMedicaLink");
-            if (giocatore.visitaMedicaDocumento && giocatore.visitaMedicaDocumento !== "") {
-                const link = document.createElement("a");
-                link.href = giocatore.visitaMedicaDocumento; // URL del file
-                link.textContent = "Scarica Visita Medica";
-                visitaMedicaLinkElement.appendChild(link);
-            } else {
-                visitaMedicaLinkElement.textContent = "Nessun documento caricato.";
-            }
-        
+  <script>
+    // Estrazione dell'ID del giocatore dalla query string dell'URL
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
+    // Funzione per caricare i dati del giocatore dal file JSON
     fetch("dati/giocatori.json")
       .then(res => res.json())
       .then(data => {
@@ -45,6 +31,7 @@
           return;
         }
 
+        // Costruzione dell'HTML per visualizzare i dati del giocatore
         const html = `
           <p><strong>Nome:</strong> ${giocatore.nome}</p>
           <p><strong>Cognome:</strong> ${giocatore.cognome}</p>
@@ -58,6 +45,11 @@
           <p><strong>Visita Medica:</strong> ${giocatore.visitaMedica}</p>
           <p><strong>Scadenza Certificato:</strong> ${giocatore.scadenza}</p>
           <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
+          
+          <!-- Link per il download del certificato medico -->
+          ${giocatore.certificatoMedico ? 
+            `<a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatore.certificatoMedico}" download>Scarica Certificato Medico</a>` 
+            : ''}
         `;
         document.getElementById("datiGiocatore").innerHTML = html;
       })
