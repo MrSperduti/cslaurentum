@@ -38,7 +38,7 @@ document.getElementById("caricaContabilita").addEventListener("change", function
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
-  
+
   // Gestione del caricamento della foto
   const fotoInput = e.target.querySelector('input[name="foto"]');
   if (fotoInput.files.length > 0) {
