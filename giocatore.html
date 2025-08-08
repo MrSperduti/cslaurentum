@@ -10,15 +10,29 @@
 <body>
   <div class="container">
     <h1>Profilo Giocatore</h1>
-    <div id="datiGiocatore">
+    
+        <div id="datiGiocatore">
+            <p><strong>Visita Medica:</strong> <span id="visitaMedicaLink"></span></p>
+        
       <p>Caricamento in corso...</p>
-          <div id="downloadVisita"></div>
     </div>
     <button onclick="window.history.back()">Torna Indietro</button>
     <button onclick="location.href='index.html'">Torna alla Home</button>
   </div>
 
-  <script>
+  
+        <script>
+            const giocatore = data[id];  // già presente nella pagina
+            const visitaMedicaLinkElement = document.getElementById("visitaMedicaLink");
+            if (giocatore.visitaMedicaDocumento && giocatore.visitaMedicaDocumento !== "") {
+                const link = document.createElement("a");
+                link.href = giocatore.visitaMedicaDocumento; // URL del file
+                link.textContent = "Scarica Visita Medica";
+                visitaMedicaLinkElement.appendChild(link);
+            } else {
+                visitaMedicaLinkElement.textContent = "Nessun documento caricato.";
+            }
+        
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
@@ -46,15 +60,6 @@
           <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
         `;
         document.getElementById("datiGiocatore").innerHTML = html;
-        // Link download visita medica
-        const box = document.getElementById('downloadVisita');
-        if (giocatore.visitaMedicaData) {
-          const a = document.createElement('a');
-          a.href = giocatore.visitaMedicaData;
-          a.download = giocatore.visitaMedicaFileName || 'visita-medica';
-          a.textContent = '⬇️ Scarica visita medica';
-          box.appendChild(a);
-        }
       })
       .catch(() => {
         document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";

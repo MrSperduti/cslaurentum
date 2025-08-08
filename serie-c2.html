@@ -15,10 +15,13 @@
           <th>Nome</th>
           <th>Data di Nascita</th>
           <th>Matricola</th>
-          <th>Dettagli</th><th>Visita</th>
+          <th>Dettagli</th>
         </tr>
       </thead>
-      <tbody>
+      
+        <tbody>
+            <!-- Popola la tabella con i giocatori della categoria -->
+        
         <!-- I dati verranno popolati dinamicamente tramite JavaScript -->
       </tbody>
     </table>
@@ -46,7 +49,6 @@ fetch('dati/giocatori.json')
         <td>${g.dataNascita}</td>
         <td>${g.matricola}</td>
         <td><a href="giocatore.html?id=${g.index}">Dettagli</a></td>
-        <td>${g.visitaMedicaData ? `<a href=\"${g.visitaMedicaData}\" download=\"${g.visitaMedicaFileName || 'visita-medica'}\">Scarica</a>` : "-"}</td>
       `;
       elenco.appendChild(row);
     });
