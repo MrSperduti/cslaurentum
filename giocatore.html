@@ -12,6 +12,7 @@
     <h1>Profilo Giocatore</h1>
     <div id="datiGiocatore">
       <p>Caricamento in corso...</p>
+          <div id="downloadVisita"></div>
     </div>
     <button onclick="window.history.back()">Torna Indietro</button>
     <button onclick="location.href='index.html'">Torna alla Home</button>
@@ -45,6 +46,15 @@
           <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
         `;
         document.getElementById("datiGiocatore").innerHTML = html;
+        // Link download visita medica
+        const box = document.getElementById('downloadVisita');
+        if (giocatore.visitaMedicaData) {
+          const a = document.createElement('a');
+          a.href = giocatore.visitaMedicaData;
+          a.download = giocatore.visitaMedicaFileName || 'visita-medica';
+          a.textContent = '⬇️ Scarica visita medica';
+          box.appendChild(a);
+        }
       })
       .catch(() => {
         document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";

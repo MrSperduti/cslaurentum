@@ -15,6 +15,20 @@
   </div>
 
   <script>
+  // --- Helpers per decimali ITA ---
+  function parseImporto(val) {
+    if (typeof val === "number") return val;
+    if (val == null) return 0;
+    const clean = String(val).trim().replace(/\s+/g, "").replace(",", ".");
+    const num = Number(clean);
+    return isNaN(num) ? 0 : num;
+  }
+  function formatEuro(num) {
+    const n = typeof num === "number" ? num : parseImporto(num);
+    const safe = Math.abs(n) < 1e-9 ? 0 : n;
+    return safe.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+  }
+
     const urlParams = new URLSearchParams(window.location.search);
     const meseParam = urlParams.get("mese"); // es. luglio2025
 
@@ -65,7 +79,7 @@
           const tbody = document.createElement("tbody");
 
           filtrati.forEach(m => {
-            const importo = parseFloat(m.totale || "0");
+            const importo = parseImporto(m.totale);
             if (m.tipo === "Entrata") totaleEntrate += importo;
             else if (m.tipo === "Uscita") totaleUscite += importo;
 
@@ -77,7 +91,7 @@
               <td>${m.tipo}</td>
               <td>${dataFormatted}</td>
               <td>${m.descrizione}</td>
-              <td>${m.totale}</td>
+              <td>${formatEuro(importo)}</td>
               <td>${m.note || ""}</td>
             `;
             tbody.appendChild(tr);
@@ -87,9 +101,9 @@
           document.getElementById("tabellaMese").appendChild(table);
 
           document.getElementById("riepilogoMese").innerHTML = `
-            <p><strong>Totale Entrate:</strong> € ${totaleEntrate.toFixed(2)}</p>
-            <p><strong>Totale Uscite:</strong> € ${totaleUscite.toFixed(2)}</p>
-            <p><strong>Saldo Mensile:</strong> € ${(totaleEntrate - totaleUscite).toFixed(2)}</p>
+            <p><strong>Totale Entrate:</strong> ${formatEuro(totaleEntrate)}</p>
+            <p><strong>Totale Uscite:</strong> ${formatEuro(totaleUscite)}</p>
+            <p><strong>Saldo Mensile:</strong> ${formatEuro(totaleEntrate - totaleUscite)}</p>
           `;
         });
     }
