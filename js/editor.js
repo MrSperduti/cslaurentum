@@ -1,5 +1,5 @@
 
-async function readFileAsDataURL(file) {
+function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
@@ -48,22 +48,10 @@ document.getElementById("giocatoreForm").addEventListener("submit", async functi
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   const file = formData.get("visitaMedicaDocumento");
-  let visitaFileName = null, visitaMime = null, visitaData = null;
   if (file && file.size > 0) {
-    visitaFileName = file.name;
-    visitaMime = file.type || "";
-    visitaData = await readFileAsDataURL(file);
-    data.visitaMedicaFileName = visitaFileName;
-    data.visitaMedicaMime = visitaMime;
-    data.visitaMedicaData = visitaData;
-  } else if (modificaGiocatoreIndex !== null) {
-    // preserva eventuale documento esistente se non ne carichi uno nuovo
-    const old = giocatori[modificaGiocatoreIndex] || {};
-    if (old.visitaMedicaData) {
-      data.visitaMedicaFileName = old.visitaMedicaFileName || null;
-      data.visitaMedicaMime = old.visitaMedicaMime || null;
-      data.visitaMedicaData = old.visitaMedicaData || null;
-    }
+    data.visitaMedicaFileName = file.name;
+    data.visitaMedicaMime = file.type;
+    data.visitaMedicaData = await readFileAsDataURL(file);
   }
   if (modificaGiocatoreIndex !== null) {
     giocatori[modificaGiocatoreIndex] = data;
@@ -81,22 +69,10 @@ document.getElementById("movimentoForm").addEventListener("submit", function(e) 
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   const file = formData.get("visitaMedicaDocumento");
-  let visitaFileName = null, visitaMime = null, visitaData = null;
   if (file && file.size > 0) {
-    visitaFileName = file.name;
-    visitaMime = file.type || "";
-    visitaData = await readFileAsDataURL(file);
-    data.visitaMedicaFileName = visitaFileName;
-    data.visitaMedicaMime = visitaMime;
-    data.visitaMedicaData = visitaData;
-  } else if (modificaGiocatoreIndex !== null) {
-    // preserva eventuale documento esistente se non ne carichi uno nuovo
-    const old = giocatori[modificaGiocatoreIndex] || {};
-    if (old.visitaMedicaData) {
-      data.visitaMedicaFileName = old.visitaMedicaFileName || null;
-      data.visitaMedicaMime = old.visitaMedicaMime || null;
-      data.visitaMedicaData = old.visitaMedicaData || null;
-    }
+    data.visitaMedicaFileName = file.name;
+    data.visitaMedicaMime = file.type;
+    data.visitaMedicaData = await readFileAsDataURL(file);
   }
 
   if (!contabilita || Array.isArray(contabilita)) {
@@ -116,44 +92,23 @@ document.getElementById("movimentoForm").addEventListener("submit", function(e) 
   e.target.reset();
 });
 
-
 function mostraTabellaGiocatori() {
   const div = document.getElementById("listaGiocatori");
   div.innerHTML = "";
   if (giocatori.length === 0) return;
 
-  // Colonne visualizzate (escludiamo i campi base64)
-  const colonne = ["nome","cognome","dataNascita","indirizzo","telefono","documento","matricola","taglia","maglia","visitaMedica","scadenza","categoria","visitaMedicaFileName"];
   const table = document.createElement("table");
-  table.innerHTML = "<thead><tr>" + colonne.map(k => `<th>${k}</th>`).join("") + "<th>Documento</th><th>Azioni</th></tr></thead>";
+  table.innerHTML = "<thead><tr>" + Object.keys(giocatori[0]).map(k => `<th>${k}</th>`).join("") + "<th>Azioni</th></tr></thead>";
   const tbody = document.createElement("tbody");
 
   giocatori.forEach((g, i) => {
     const tr = document.createElement("tr");
-    colonne.forEach(k => {
+    Object.values(g).forEach(v => {
       const td = document.createElement("td");
-      if (k === "visitaMedicaFileName") {
-        td.textContent = g.visitaMedicaData ? (g.visitaMedicaFileName || "presente") : "";
-      } else {
-        td.textContent = g[k] ?? "";
-      }
+      td.textContent = v;
       tr.appendChild(td);
     });
 
-    // Colonna download
-    const tdDoc = document.createElement("td");
-    if (g.visitaMedicaData) {
-      const a = document.createElement("a");
-      a.textContent = "Scarica";
-      a.href = g.visitaMedicaData;
-      a.download = g.visitaMedicaFileName || "visita-medica";
-      tdDoc.appendChild(a);
-    } else {
-      tdDoc.textContent = "-";
-    }
-    tr.appendChild(tdDoc);
-
-    // Azioni
     const tdAzioni = document.createElement("td");
     const btnMod = document.createElement("button");
     btnMod.textContent = "Modifica";
@@ -175,7 +130,6 @@ function mostraTabellaGiocatori() {
 
   table.appendChild(tbody);
   div.appendChild(table);
-}
 }
 
 function mostraTabellaContabilita() {
