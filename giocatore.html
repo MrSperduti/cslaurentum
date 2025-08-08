@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profilo Giocatore</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .profile-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .profile-info {
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .profile-photo img {
+      max-width: 200px;
+      border-radius: 10px;
+    }
+
+    .profile-photo {
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -32,8 +54,8 @@
 
         // Costruzione dell'HTML per visualizzare i dati del giocatore
         let html = `
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div style="flex: 1;">
+          <div class="profile-container">
+            <div class="profile-info">
               <p><strong>Nome:</strong> ${giocatore.nome}</p>
               <p><strong>Cognome:</strong> ${giocatore.cognome}</p>
               <p><strong>Data di nascita:</strong> ${giocatore.dataNascita}</p>
@@ -47,26 +69,6 @@
               <p><strong>Scadenza Certificato:</strong> ${giocatore.scadenza}</p>
               <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
             </div>
-            <div style="flex-shrink: 0; margin-left: 20px;">
+            <div class="profile-photo">
               <!-- Mostra la foto del giocatore, se presente -->
-              ${giocatore.foto ? `<img src="https://github.com/MrSperduti/cslaurentum/raw/main/foto/${giocatore.foto}" alt="Foto del giocatore" style="max-width: 200px; border-radius: 10px;" />` : ''}
-            </div>
-          </div>
-        `;
-
-        // Aggiungi il certificato medico se presente
-        if (giocatore.certificatoMedico) {
-          html += `
-            <p><strong>Certificato Medico:</strong> 
-            <a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatore.certificatoMedico}" download>Scarica Certificato Medico</a></p>
-          `;
-        }
-
-        document.getElementById("datiGiocatore").innerHTML = html;
-      })
-      .catch(() => {
-        document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";
-      });
-  </script>
-</body>
-</html>
+              ${giocatore.foto ? `<img src="https://github.com/
