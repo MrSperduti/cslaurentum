@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movimenti mensili</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 id="titoloMese">Movimenti del mese</h1>
+    <div id="riepilogoMese"></div>
+    <div id="tabellaMese"></div>
+    <button onclick="window.history.back()">⬅️ Torna indietro</button>
+  </div>
+
+  <script>
+  // --- Helpers per decimali ITA ---
+  function parseImporto(val) {
+    if (typeof val === "number") return val;
+    if (val == null) return 0;
+    const clean = String(val).trim().replace(/\s+/g, "").replace(",", ".");
+    const num = Number(clean);
+    return isNaN(num) ? 0 : num;
+  }
+  function formatEuro(num) {
+    const n = typeof num === "number" ? num : parseImporto(num);
+    const safe = Math.abs(n) < 1e-9 ? 0 : n;
+    return safe.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+  }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const meseParam = urlParams.get("mese"); // es. luglio2025
+
+    const mesi = {
+      'gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04',
+      'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08',
+      'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12'
+    };
+
+    if (!meseParam) {
+      document.getElementById("tabellaMese").innerHTML = "<p>Mese non specificato.</p>";
+    } else {
+      const nomeMese = meseParam.replace(/(\D+)(\d{4})/, "$1 $2");
+      document.getElementById("titoloMese").textContent = "Movimenti di " + nomeMese.charAt(0).toUpperCase() + nomeMese.slice(1);
+
+      fetch("dati/contabilita.json")
+        .then(res => res.json())
+        .then(data => {
+          let movimenti = [];
+
+          ["Entrata", "Uscita"].forEach(tipo => {
+            if (Array.isArray(data[tipo])) {
+              data[tipo].forEach(m => movimenti.push({ ...m, tipo }));
+            }
+          });
+
+          const [meseTxt, anno] = meseParam.match(/([a-z]+)(\d{4})/).slice(1);
+          const meseNum = mesi[meseTxt.toLowerCase()];
+
+          const filtrati = movimenti.filter(m => m.data && m.data.startsWith(`${anno}-${meseNum}`));
+          filtrati.sort((a, b) => (a.data || "").localeCompare(b.data));
+
+          let totaleEntrate = 0;
+          let totaleUscite = 0;
+
+          const table = document.createElement("table");
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Descrizione</th>
+                <th>Totale</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+          `;
+          const tbody = document.createElement("tbody");
+
+          filtrati.forEach(m => {
+            const importo = parseImporto(m.totale);
+            if (m.tipo === "Entrata") totaleEntrate += importo;
+            else if (m.tipo === "Uscita") totaleUscite += importo;
+
+            const [anno, mese, giorno] = m.data.split("-");
+            const dataFormatted = `${giorno}-${mese}-${anno}`;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${m.tipo}</td>
+              <td>${dataFormatted}</td>
+              <td>${m.descrizione}</td>
+              <td>${formatEuro(importo)}</td>
+              <td>${m.note || ""}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          table.appendChild(tbody);
+          document.getElementById("tabellaMese").appendChild(table);
+
+          document.getElementById("riepilogoMese").innerHTML = `
+            <p><strong>Totale Entrate:</strong> ${formatEuro(totaleEntrate)}</p>
+            <p><strong>Totale Uscite:</strong> ${formatEuro(totaleUscite)}</p>
+            <p><strong>Saldo Mensile:</strong> ${formatEuro(totaleEntrate - totaleUscite)}</p>
+          `;
+        });
+    }
+  </script>
+</body>
+</html>
