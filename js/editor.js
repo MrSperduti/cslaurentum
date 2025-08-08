@@ -1,33 +1,38 @@
-document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(e.target).entries());
+let giocatori = [];
+let contabilita = [];
 
-  // Gestione del caricamento della foto
-  const fotoInput = e.target.querySelector('input[name="foto"]');
-  if (fotoInput.files.length > 0) {
-    const fotoFile = fotoInput.files[0];
-    // Salviamo solo il nome del file della foto, esattamente come per il certificato medico
-    data.foto = fotoFile.name;
-  }
+let modificaGiocatoreIndex = null;
+let modificaContabilita = { tipo: null, index: null };
 
-  // Gestione del caricamento del certificato medico (già esistente)
-  const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
-  if (certificatoInput.files.length > 0) {
-    const certificatoFile = certificatoInput.files[0];
-    data.certificatoMedico = certificatoFile.name;
-  }
-
-  // Verifica se stiamo modificando un giocatore esistente
-  if (modificaGiocatoreIndex !== null) {
-    // Se il giocatore è già esistente, aggiorniamo i suoi dati
-    giocatori[modificaGiocatoreIndex] = data;
-    modificaGiocatoreIndex = null;
-  } else {
-    // Aggiungiamo un nuovo giocatore
-    giocatori.push(data);
-  }
-
-  aggiornaAnteprima();
-  mostraTabellaGiocatori();
-  e.target.reset(); // Reset del form dopo l'invio
+// Caricamento del file JSON dei giocatori
+document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      giocatori = JSON.parse(reader.result);
+      aggiornaAnteprima(); // Assicuriamoci che l'anteprima venga aggiornata correttamente
+      mostraTabellaGiocatori();
+    } catch (err) {
+      alert("Errore nel file giocatori.json");
+    }
+  };
+  reader.readAsText(e.target.files[0]);
 });
+
+// Caricamento del file JSON della contabilità
+document.getElementById("caricaContabilita").addEventListener("change", function(e) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      contabilita = JSON.parse(reader.result);
+      aggiornaAnteprima(); // Assicuriamoci che l'anteprima venga aggiornata correttamente
+      mostraTabellaContabilita();
+    } catch (err) {
+      alert("Errore nel file contabilita.json");
+    }
+  };
+  reader.readAsText(e.target.files[0]);
+});
+
+// Gestione del submit del form per l'aggiunta o modifica di un giocatore
+document.get
