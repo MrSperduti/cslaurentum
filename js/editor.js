@@ -1,38 +1,47 @@
-let giocatori = [];
-let modificaGiocatoreIndex = null;
+// Funzione per modificare un giocatore
+function modificaGiocatore(i) {
+  const form = document.getElementById("giocatoreForm");
+  // Popola i campi del form con i dati del giocatore
+  Object.entries(giocatori[i]).forEach(([k, v]) => {
+    if (form[k]) form[k].value = v;
+  });
 
-// Caricamento del file JSON dei giocatori
-document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
-  const reader = new FileReader();
-  reader.onload = function() {
-    try {
-      giocatori = JSON.parse(reader.result);
-      aggiornaAnteprima();
-      mostraTabellaGiocatori();
-    } catch (err) {
-      alert("Errore nel file giocatori.json");
-    }
-  };
-  reader.readAsText(e.target.files[0]);
-});
+  // Se esiste un certificato medico, mostralo nel form
+  const certificatoInput = document.querySelector('input[name="certificatoMedico"]');
+  if (giocatori[i].certificatoMedico) {
+    // Mostra il nome del file del certificato
+    certificatoInput.setAttribute("data-certificato", giocatori[i].certificatoMedico);
+  }
+
+  // Se esiste una foto, mostralo nel form
+  const fotoPreviewDiv = document.getElementById("fotoPreview");
+  if (giocatori[i].foto) {
+    fotoPreviewDiv.innerHTML = `<img src="foto/${giocatori[i].foto}" alt="Foto Giocatore" style="max-width: 150px; height: auto;">`;
+  } else {
+    fotoPreviewDiv.innerHTML = "Nessuna foto disponibile.";
+  }
+
+  // Imposta l'indice del giocatore da modificare
+  modificaGiocatoreIndex = i;
+  window.scrollTo(0, form.offsetTop);
+}
 
 // Gestione del submit del form per l'aggiunta o modifica di un giocatore
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
   
   // Raccolta dei dati dal form
-  const data = Object.fromEntries(new FormData(e.target).entries());
+  const data = Object.fromEntries(new FormData(e.target).entries());  // Raccoglie tutti i dati dal form
 
   // Gestione del certificato medico (se presente)
   const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
+  // Verifica se è stato selezionato un nuovo file
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
-    data.certificatoMedico = certificatoFile.name;
-  } else {
+    data.certificatoMedico = certificatoFile.name;  // Salviamo solo il nome del file
+  } else if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].certificatoMedico) {
     // Mantieni il certificato esistente se non viene caricato un nuovo file
-    if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].certificatoMedico) {
-      data.certificatoMedico = giocatori[modificaGiocatoreIndex].certificatoMedico;
-    }
+    data.certificatoMedico = giocatori[modificaGiocatoreIndex].certificatoMedico;
   }
 
   // Gestione della foto (se presente)
@@ -40,11 +49,9 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
   if (fotoInput.files.length > 0) {
     const fotoFile = fotoInput.files[0];
     data.foto = fotoFile.name;  // Salviamo solo il nome del file immagine
-  } else {
+  } else if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].foto) {
     // Mantieni la foto esistente se non viene caricata una nuova immagine
-    if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].foto) {
-      data.foto = giocatori[modificaGiocatoreIndex].foto;
-    }
+    data.foto = giocatori[modificaGiocatoreIndex].foto;
   }
 
   // Se si sta modificando un giocatore esistente
@@ -65,95 +72,4 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
 // Funzione per aggiornare l'anteprima del file JSON dei giocatori
 function aggiornaAnteprima() {
   document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
-}
-
-// Funzione per scaricare il file JSON dei giocatori
-function scaricaGiocatori() {
-  const blob = new Blob([JSON.stringify(giocatori, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "giocatori.json";  // Scarica il file con il nome "giocatori.json"
-  link.click();
-}
-
-// Funzione per mostrare la tabella dei giocatori
-function mostraTabellaGiocatori() {
-  const div = document.getElementById("listaGiocatori");
-  div.innerHTML = "";
-  if (giocatori.length === 0) return;
-
-  const table = document.createElement("table");
-  table.innerHTML = "<thead><tr>" + Object.keys(giocatori[0]).map(k => `<th>${k}</th>`).join("") + "<th>Azioni</th></tr></thead>";
-  const tbody = document.createElement("tbody");
-
-  giocatori.forEach((g, i) => {
-    const tr = document.createElement("tr");
-    Object.values(g).forEach(v => {
-      const td = document.createElement("td");
-      td.textContent = v;
-      tr.appendChild(td);
-    });
-
-    const tdAzioni = document.createElement("td");
-    const btnMod = document.createElement("button");
-    btnMod.textContent = "Modifica";
-    btnMod.onclick = () => modificaGiocatore(i);
-
-    const btnDel = document.createElement("button");
-    btnDel.textContent = "Elimina";
-    btnDel.onclick = () => {
-      giocatori.splice(i, 1);
-      aggiornaAnteprima();
-      mostraTabellaGiocatori();
-    };
-
-    tdAzioni.appendChild(btnMod);
-    tdAzioni.appendChild(btnDel);
-    tr.appendChild(tdAzioni);
-    tbody.appendChild(tr);
-  });
-
-  table.appendChild(tbody);
-  div.appendChild(table);
-}
-
-// Funzione per modificare un giocatore
-function modificaGiocatore(i) {
-  const form = document.getElementById("giocatoreForm");
-  Object.entries(giocatori[i]).forEach(([k, v]) => {
-    if (form[k]) form[k].value = v;
-  });
-
-  // Mostra l'anteprima della foto se esiste
-  const fotoPreviewDiv = document.getElementById("fotoPreview");
-  if (giocatori[i].foto) {
-    fotoPreviewDiv.innerHTML = `<img src="foto/${giocatori[i].foto}" alt="Foto Giocatore" style="max-width: 150px; height: auto;">`;
-  } else {
-    fotoPreviewDiv.innerHTML = "Nessuna foto disponibile.";
-  }
-
-  // Mostra il certificato medico esistente (se presente)
-  const certificatoPreviewDiv = document.getElementById("certificatoPreview");
-  if (giocatori[i].certificatoMedico) {
-    certificatoPreviewDiv.innerHTML = `<a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatori[i].certificatoMedico}" download>Scarica Certificato Medico</a>`;
-  } else {
-    certificatoPreviewDiv.innerHTML = "Nessun certificato medico disponibile.";
-  }
-
-  modificaGiocatoreIndex = i;
-  window.scrollTo(0, form.offsetTop);
-}
-
-// Funzione per ordinare la tabella dei giocatori
-function ordinaPerCampo(campo) {
-  giocatori.sort((a, b) => {
-    let valA = a[campo] || "";
-    let valB = b[campo] || "";
-    if (!isNaN(valA) && !isNaN(valB)) {
-      return Number(valA) - Number(valB);
-    }
-    return valA.localeCompare(valB);
-  });
-  mostraTabellaGiocatori();
-  aggiornaAnteprima();
 }
