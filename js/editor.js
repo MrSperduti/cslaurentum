@@ -10,7 +10,7 @@ document.getElementById("caricaGiocatori").addEventListener("change", function(e
   reader.onload = function() {
     try {
       giocatori = JSON.parse(reader.result);
-      aggiornaAnteprima(); // Aggiorniamo l'anteprima del JSON
+      aggiornaAnteprima();
       mostraTabellaGiocatori();
     } catch (err) {
       alert("Errore nel file giocatori.json");
@@ -25,7 +25,7 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   reader.onload = function() {
     try {
       contabilita = JSON.parse(reader.result);
-      aggiornaAnteprima(); // Aggiorniamo l'anteprima del JSON
+      aggiornaAnteprima();
       mostraTabellaContabilita();
     } catch (err) {
       alert("Errore nel file contabilita.json");
@@ -38,25 +38,17 @@ document.getElementById("caricaContabilita").addEventListener("change", function
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
-
-  // Gestione del caricamento della foto
-  const fotoInput = e.target.querySelector('input[name="foto"]');
-  if (fotoInput.files.length > 0) {
-    const fotoFile = fotoInput.files[0];
-    // Salviamo solo il nome del file della foto
-    data.foto = fotoFile.name;
-  }
-
-  // Gestione del caricamento del certificato medico (già esistente)
+  
+  // Se un documento è stato caricato, gestiamo il file del certificato medico
   const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
+    // Salviamo solo il nome del file, il file sarà caricato separatamente (su GitHub o server)
     data.certificatoMedico = certificatoFile.name;
   }
 
-  // Verifica se stiamo modificando un giocatore esistente
+  // Se si sta modificando un giocatore esistente
   if (modificaGiocatoreIndex !== null) {
-    // Se il giocatore è già esistente, aggiorniamo i suoi dati
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
   } else {
@@ -64,14 +56,36 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
     giocatori.push(data);
   }
 
-  aggiornaAnteprima(); // Aggiungi il salvataggio dell'anteprima
+  aggiornaAnteprima();
   mostraTabellaGiocatori();
+  e.target.reset(); // Reset del form dopo l'invio
+});
+
+// Gestione del submit per la contabilità
+document.getElementById("movimentoForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+
+  if (!contabilita || Array.isArray(contabilita)) {
+    contabilita = { Entrata: [], Uscita: [] };
+  }
+  if (!contabilita[data.tipo]) contabilita[data.tipo] = [];
+
+  // Modifica o aggiunta di un movimento
+  if (modificaContabilita && modificaContabilita.index !== null && modificaContabilita.tipo === data.tipo) {
+    contabilita[data.tipo][modificaContabilita.index] = data;
+    modificaContabilita = { tipo: null, index: null };
+  } else {
+    contabilita[data.tipo].push(data);
+  }
+
+  aggiornaAnteprima();
+  mostraTabellaContabilita();
   e.target.reset(); // Reset del form dopo l'invio
 });
 
 // Funzione per aggiornare l'anteprima del file JSON dei giocatori
 function aggiornaAnteprima() {
-  // Mostra l'anteprima dei giocatori nel formato JSON
   document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
   document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
 }
