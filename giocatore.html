@@ -5,12 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profilo Giocatore</title>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Aggiungi uno stile per il layout dei dati e della foto */
+    #profiloContainer {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    #datiGiocatore {
+      width: 60%;
+    }
+    #fotoGiocatore {
+      width: 30%;
+      text-align: center;
+      padding: 10px;
+    }
+    #fotoGiocatore img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1>Profilo Giocatore</h1>
-    <div id="datiGiocatore">
-      <p>Caricamento in corso...</p>
+    <div id="profiloContainer">
+      <div id="datiGiocatore">
+        <p>Caricamento in corso...</p>
+      </div>
+      <div id="fotoGiocatore">
+        <!-- Foto sarà visibile qui, se presente -->
+      </div>
     </div>
     <button onclick="window.history.back()">Torna Indietro</button>
     <button onclick="location.href='index.html'">Torna alla Home</button>
@@ -54,11 +82,23 @@
             <a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatore.certificatoMedico}" download>Scarica Certificato Medico</a></p>
           `;
         } else {
-          // Se la struttura è vecchia e non c'è il campo certificatoMedico, non mostriamo il link
           html += `<p>No certificato medico caricato.</p>`;
         }
 
+        // Aggiorniamo la sezione dei dati del giocatore
         document.getElementById("datiGiocatore").innerHTML = html;
+
+        // Gestiamo la visualizzazione della foto del giocatore
+        if (giocatore.foto) {
+          const img = document.createElement("img");
+          img.src = `foto/${giocatore.foto}`;
+          img.alt = `${giocatore.nome} ${giocatore.cognome}`;
+          document.getElementById("fotoGiocatore").innerHTML = ""; // Rimuoviamo il messaggio di default
+          document.getElementById("fotoGiocatore").appendChild(img);
+        } else {
+          // Se non c'è foto, mostriamo il messaggio di default
+          document.getElementById("fotoGiocatore").innerHTML = "<p>Foto non disponibile</p>";
+        }
       })
       .catch(() => {
         document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";
