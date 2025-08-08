@@ -28,6 +28,11 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
     data.certificatoMedico = certificatoFile.name;
+  } else {
+    // Mantieni il certificato esistente se non viene caricato un nuovo file
+    if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].certificatoMedico) {
+      data.certificatoMedico = giocatori[modificaGiocatoreIndex].certificatoMedico;
+    }
   }
 
   // Gestione della foto (se presente)
@@ -35,15 +40,15 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
   if (fotoInput.files.length > 0) {
     const fotoFile = fotoInput.files[0];
     data.foto = fotoFile.name;  // Salviamo solo il nome del file immagine
+  } else {
+    // Mantieni la foto esistente se non viene caricata una nuova immagine
+    if (modificaGiocatoreIndex !== null && giocatori[modificaGiocatoreIndex].foto) {
+      data.foto = giocatori[modificaGiocatoreIndex].foto;
+    }
   }
 
   // Se si sta modificando un giocatore esistente
   if (modificaGiocatoreIndex !== null) {
-    // Verifica se il campo foto è presente e lo aggiorna
-    if (fotoInput.files.length > 0) {
-      giocatori[modificaGiocatoreIndex].foto = fotoFile.name;
-    }
-    // Modifica o aggiorna gli altri dati
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
   } else {
@@ -118,6 +123,23 @@ function modificaGiocatore(i) {
   Object.entries(giocatori[i]).forEach(([k, v]) => {
     if (form[k]) form[k].value = v;
   });
+
+  // Mostra l'anteprima della foto se esiste
+  const fotoPreviewDiv = document.getElementById("fotoPreview");
+  if (giocatori[i].foto) {
+    fotoPreviewDiv.innerHTML = `<img src="foto/${giocatori[i].foto}" alt="Foto Giocatore" style="max-width: 150px; height: auto;">`;
+  } else {
+    fotoPreviewDiv.innerHTML = "Nessuna foto disponibile.";
+  }
+
+  // Mostra il certificato medico esistente (se presente)
+  const certificatoPreviewDiv = document.getElementById("certificatoPreview");
+  if (giocatori[i].certificatoMedico) {
+    certificatoPreviewDiv.innerHTML = `<a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatori[i].certificatoMedico}" download>Scarica Certificato Medico</a>`;
+  } else {
+    certificatoPreviewDiv.innerHTML = "Nessun certificato medico disponibile.";
+  }
+
   modificaGiocatoreIndex = i;
   window.scrollTo(0, form.offsetTop);
 }
