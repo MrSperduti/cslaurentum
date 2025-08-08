@@ -38,24 +38,4 @@
           <p><strong>Data di nascita:</strong> ${giocatore.dataNascita}</p>
           <p><strong>Indirizzo:</strong> ${giocatore.indirizzo}</p>
           <p><strong>Telefono:</strong> ${giocatore.telefono}</p>
-          <p><strong>Numero Documento:</strong> ${giocatore.documento}</p>
-          <p><strong>Matricola:</strong> ${giocatore.matricola}</p>
-          <p><strong>Taglia:</strong> ${giocatore.taglia}</p>
-          <p><strong>Numero Maglia:</strong> ${giocatore.maglia}</p>
-          <p><strong>Visita Medica:</strong> ${giocatore.visitaMedica}</p>
-          <p><strong>Scadenza Certificato:</strong> ${giocatore.scadenza}</p>
-          <p><strong>Categoria:</strong> ${giocatore.categoria}</p>
-          
-          <!-- Link per il download del certificato medico -->
-          ${giocatore.certificatoMedico ? 
-            `<a href="https://github.com/MrSperduti/cslaurentum/raw/main/certificati/${giocatore.certificatoMedico}" download>Scarica Certificato Medico</a>` 
-            : ''}
-        `;
-        document.getElementById("datiGiocatore").innerHTML = html;
-      })
-      .catch(() => {
-        document.getElementById("datiGiocatore").innerHTML = "<p>Errore nel caricamento dei dati.</p>";
-      });
-  </script>
-</body>
-</html>
+          <p><stro
