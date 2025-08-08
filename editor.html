@@ -10,7 +10,7 @@ document.getElementById("caricaGiocatori").addEventListener("change", function(e
   reader.onload = function() {
     try {
       giocatori = JSON.parse(reader.result);
-      aggiornaAnteprima(); // Assicurati che l'anteprima venga aggiornata correttamente
+      aggiornaAnteprima(); // Assicuriamoci che l'anteprima venga aggiornata correttamente
       mostraTabellaGiocatori();
     } catch (err) {
       alert("Errore nel file giocatori.json");
@@ -25,7 +25,7 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   reader.onload = function() {
     try {
       contabilita = JSON.parse(reader.result);
-      aggiornaAnteprima(); // Assicurati che l'anteprima venga aggiornata correttamente
+      aggiornaAnteprima(); // Assicuriamoci che l'anteprima venga aggiornata correttamente
       mostraTabellaContabilita();
     } catch (err) {
       alert("Errore nel file contabilita.json");
@@ -48,4 +48,42 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
   }
 
   // Gestione del caricamento del certificato medico (già esistente)
-  const certificato
+  const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
+  if (certificatoInput.files.length > 0) {
+    const certificatoFile = certificatoInput.files[0];
+    data.certificatoMedico = certificatoFile.name;
+  }
+
+  // Verifica se stiamo modificando un giocatore esistente
+  if (modificaGiocatoreIndex !== null) {
+    // Se il giocatore è già esistente, aggiorniamo i suoi dati
+    giocatori[modificaGiocatoreIndex] = data;
+    modificaGiocatoreIndex = null;
+  } else {
+    // Aggiungiamo un nuovo giocatore
+    giocatori.push(data);
+  }
+
+  aggiornaAnteprima(); // Aggiungi il salvataggio dell'anteprima
+  mostraTabellaGiocatori();
+  e.target.reset(); // Reset del form dopo l'invio
+});
+
+// Funzione per aggiornare l'anteprima del file JSON dei giocatori
+function aggiornaAnteprima() {
+  // Mostra l'anteprima dei giocatori nel formato JSON
+  const anteprimaGiocatori = document.getElementById("anteprimaGiocatori");
+  const anteprimaContabilita = document.getElementById("anteprimaContabilita");
+
+  // Aggiungiamo il controllo per evitare che l'anteprima venga sovrascritta
+  if (anteprimaGiocatori) {
+    anteprimaGiocatori.textContent = JSON.stringify(giocatori, null, 2);
+  }
+  if (anteprimaContabilita) {
+    anteprimaContabilita.textContent = JSON.stringify(contabilita, null, 2);
+  }
+}
+
+// Funzione per scaricare il file JSON dei giocatori
+function scaricaGiocatori() {
+  const blob = new Blob([JSON.stringify(g]()
