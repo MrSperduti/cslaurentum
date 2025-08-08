@@ -1,4 +1,3 @@
-
 let giocatori = [];
 let contabilita = [];
 
@@ -36,6 +35,15 @@ document.getElementById("caricaContabilita").addEventListener("change", function
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
+  
+  // Se un documento è stato caricato, gestiamo il file
+  const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
+  if (certificatoInput.files.length > 0) {
+    const certificatoFile = certificatoInput.files[0];
+    // Per esempio, salviamo il nome del file nel JSON, il file dovrà essere gestito separatamente
+    data.certificatoMedico = certificatoFile.name;
+  }
+
   if (modificaGiocatoreIndex !== null) {
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
@@ -198,8 +206,6 @@ function apriRepoGitHub() {
   const repoUrl = "https://github.com/MrSperduti/cslaurentum";
   window.open(repoUrl, "_blank");
 }
-
-
 
 function ordinaPerCampo(campo) {
   giocatori.sort((a, b) => {
