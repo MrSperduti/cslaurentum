@@ -39,6 +39,11 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
 
   // Se si sta modificando un giocatore esistente
   if (modificaGiocatoreIndex !== null) {
+    // Verifica se il campo foto è presente e lo aggiorna
+    if (fotoInput.files.length > 0) {
+      giocatori[modificaGiocatoreIndex].foto = fotoFile.name;
+    }
+    // Modifica o aggiorna gli altri dati
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
   } else {
