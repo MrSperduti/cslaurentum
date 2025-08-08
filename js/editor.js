@@ -1,8 +1,5 @@
 let giocatori = [];
-let contabilita = [];
-
 let modificaGiocatoreIndex = null;
-let modificaContabilita = { tipo: null, index: null };
 
 // Caricamento del file JSON dei giocatori
 document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
@@ -19,38 +16,25 @@ document.getElementById("caricaGiocatori").addEventListener("change", function(e
   reader.readAsText(e.target.files[0]);
 });
 
-// Caricamento del file JSON della contabilità
-document.getElementById("caricaContabilita").addEventListener("change", function(e) {
-  const reader = new FileReader();
-  reader.onload = function() {
-    try {
-      contabilita = JSON.parse(reader.result);
-      aggiornaAnteprima();
-      mostraTabellaContabilita();
-    } catch (err) {
-      alert("Errore nel file contabilita.json");
-    }
-  };
-  reader.readAsText(e.target.files[0]);
-});
-
 // Gestione del submit del form per l'aggiunta o modifica di un giocatore
 document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
+  
+  // Raccolta dei dati dal form
   const data = Object.fromEntries(new FormData(e.target).entries());
 
-  // Se un documento è stato caricato, gestiamo il file del certificato medico
+  // Gestione del certificato medico (se presente)
   const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
   if (certificatoInput.files.length > 0) {
     const certificatoFile = certificatoInput.files[0];
     data.certificatoMedico = certificatoFile.name;
   }
 
-  // Se un documento è stato caricato, gestiamo anche il file della foto
+  // Gestione della foto (se presente)
   const fotoInput = e.target.querySelector('input[name="foto"]');
   if (fotoInput.files.length > 0) {
     const fotoFile = fotoInput.files[0];
-    data.foto = fotoFile.name;
+    data.foto = fotoFile.name;  // Salviamo solo il nome del file immagine
   }
 
   // Se si sta modificando un giocatore esistente
@@ -62,37 +46,15 @@ document.getElementById("giocatoreForm").addEventListener("submit", function(e) 
     giocatori.push(data);
   }
 
+  // Dopo aver aggiunto o modificato il giocatore, aggiorniamo l'anteprima e la lista
   aggiornaAnteprima();
   mostraTabellaGiocatori();
-  e.target.reset(); // Reset del form dopo l'invio
-});
-
-// Gestione del submit per la contabilità
-document.getElementById("movimentoForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(e.target).entries());
-
-  if (!contabilita || Array.isArray(contabilita)) {
-    contabilita = { Entrata: [], Uscita: [] };
-  }
-  if (!contabilita[data.tipo]) contabilita[data.tipo] = [];
-
-  if (modificaContabilita && modificaContabilita.index !== null && modificaContabilita.tipo === data.tipo) {
-    contabilita[data.tipo][modificaContabilita.index] = data;
-    modificaContabilita = { tipo: null, index: null };
-  } else {
-    contabilita[data.tipo].push(data);
-  }
-
-  aggiornaAnteprima();
-  mostraTabellaContabilita();
-  e.target.reset(); // Reset del form dopo l'invio
+  e.target.reset();  // Reset del form dopo l'invio
 });
 
 // Funzione per aggiornare l'anteprima del file JSON dei giocatori
 function aggiornaAnteprima() {
   document.getElementById("anteprimaGiocatori").textContent = JSON.stringify(giocatori, null, 2);
-  document.getElementById("anteprimaContabilita").textContent = JSON.stringify(contabilita, null, 2);
 }
 
 // Funzione per scaricare il file JSON dei giocatori
@@ -100,16 +62,7 @@ function scaricaGiocatori() {
   const blob = new Blob([JSON.stringify(giocatori, null, 2)], { type: "application/json" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "giocatori.json";
-  link.click();
-}
-
-// Funzione per scaricare il file JSON della contabilità
-function scaricaContabilita() {
-  const blob = new Blob([JSON.stringify(contabilita, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "contabilita.json";
+  link.download = "giocatori.json";  // Scarica il file con il nome "giocatori.json"
   link.click();
 }
 
