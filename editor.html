@@ -1,90 +1,51 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editor - CS LAURENTUM</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <script>
-  if (sessionStorage.getItem("admin") !== "ok") {
-    alert("Accesso non autorizzato");
-    location.href = "login.html";
+let giocatori = [];
+let contabilita = [];
+
+let modificaGiocatoreIndex = null;
+let modificaContabilita = { tipo: null, index: null };
+
+// Caricamento del file JSON dei giocatori
+document.getElementById("caricaGiocatori").addEventListener("change", function(e) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      giocatori = JSON.parse(reader.result);
+      aggiornaAnteprima(); // Assicurati che l'anteprima venga aggiornata correttamente
+      mostraTabellaGiocatori();
+    } catch (err) {
+      alert("Errore nel file giocatori.json");
+    }
+  };
+  reader.readAsText(e.target.files[0]);
+});
+
+// Caricamento del file JSON della contabilità
+document.getElementById("caricaContabilita").addEventListener("change", function(e) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    try {
+      contabilita = JSON.parse(reader.result);
+      aggiornaAnteprima(); // Assicurati che l'anteprima venga aggiornata correttamente
+      mostraTabellaContabilita();
+    } catch (err) {
+      alert("Errore nel file contabilita.json");
+    }
+  };
+  reader.readAsText(e.target.files[0]);
+});
+
+// Gestione del submit del form per l'aggiunta o modifica di un giocatore
+document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+
+  // Gestione del caricamento della foto
+  const fotoInput = e.target.querySelector('input[name="foto"]');
+  if (fotoInput.files.length > 0) {
+    const fotoFile = fotoInput.files[0];
+    // Salviamo solo il nome del file della foto
+    data.foto = fotoFile.name;
   }
-  </script>
-  <div class="container">
-    <h1>Editor Gestionale CS LAURENTUM</h1>
 
-    <h2>📁 Carica file JSON esistenti</h2>
-    <label>Carica giocatori.json:
-      <pre id="anteprimaGiocatori" class="json-preview">[  ]</pre>
-      <input type="file" id="caricaGiocatori" accept=".json">
-    </label>
-    <label>Carica contabilita.json:
-      <pre id="anteprimaContabilita" class="json-preview">{\n  "Entrata": [],\n  "Uscita": []\n}</pre>
-      <input type="file" id="caricaContabilita" accept=".json">
-    </label>
-
-    <hr>
-    <h2>👥 Sezione Giocatori</h2>
-    <form id="giocatoreForm">
-      <label>Nome: <input type="text" name="nome" required></label>
-      <label>Cognome: <input type="text" name="cognome" required></label>
-      <label>Data di nascita: <input type="date" name="dataNascita" required></label>
-      <label>Indirizzo: <input type="text" name="indirizzo"></label>
-      <label>Telefono: <input type="text" name="telefono"></label>
-      <label>Numero Documento: <input type="text" name="documento"></label>
-      <label>Matricola: <input type="text" name="matricola"></label>
-      <label>Taglia: <input type="text" name="taglia"></label>
-      <label>Numero Maglia: <input type="number" name="maglia"></label>
-      <label>Visita Medica:
-        <select name="visitaMedica">
-          <option value="Si">Si</option>
-          <option value="No">No</option>
-        </select>
-      </label>
-      <label>Certificato Medico: <input type="file" name="certificatoMedico" accept="application/pdf,image/*"></label>
-      <label>Foto del Giocatore: <input type="file" name="foto" accept="image/*"></label> <!-- Nuovo campo per la foto -->
-      <label>Scadenza Certificato: <input type="date" name="scadenza"></label>
-      <label>Categoria:
-        <select name="categoria">
-          <option value="Serie C2">Serie C2</option>
-          <option value="Under 21">Under 21</option>
-        </select>
-      </label>
-      <button type="submit">Aggiungi Giocatore</button>
-    </form>
-    <button onclick="scaricaGiocatori()">💾 Scarica giocatori.json</button>
-    <div id="listaGiocatori"></div>
-
-    <hr>
-    <h2>💰 Sezione Contabilità</h2>
-    <form id="movimentoForm">
-      <label>Tipo:
-        <select name="tipo">
-          <option value="Entrata">Entrata</option>
-          <option value="Uscita">Uscita</option>
-        </select>
-      </label>
-      <label>Data: <input type="date" name="data" required></label>
-      <label>Descrizione: <input type="text" name="descrizione" required></label>
-      <label>Totale (€): <input type="number" name="totale" required></label>
-      <label>Note: <input type="text" name="note"></label>
-      <button type="submit">Aggiungi Movimento</button>
-    </form>
-    <button onclick="scaricaContabilita()">💾 Scarica contabilita.json</button>
-    <div id="listaContabilita"></div>
-
-    <hr>
-    
-    <hr>
-    <h2>⬆️ Caricamento su GitHub</h2>
-    <p>Una volta scaricato il file aggiornato, puoi caricarlo manualmente nel tuo repository GitHub.</p>
-    <button onclick="apriRepoGitHub()">Apri il repository su GitHub</button>
-
-    <button onclick="location.href='index.html'">Torna alla Home</button>
-  </div>
-  <script src="js/editor.js"></script>
-</body>
-</html>
+  // Gestione del caricamento del certificato medico (già esistente)
+  const certificato
