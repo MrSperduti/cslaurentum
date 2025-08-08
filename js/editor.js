@@ -1,14 +1,4 @@
 
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-
 let giocatori = [];
 let contabilita = [];
 
@@ -43,16 +33,9 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   reader.readAsText(e.target.files[0]);
 });
 
-document.getElementById("giocatoreForm").addEventListener("submit", async function(e) {
+document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-  const file = formData.get("visitaMedicaDocumento");
-  if (file && file.size > 0) {
-    data.visitaMedicaFileName = file.name;
-    data.visitaMedicaMime = file.type;
-    data.visitaMedicaData = await readFileAsDataURL(file);
-  }
+  const data = Object.fromEntries(new FormData(e.target).entries());
   if (modificaGiocatoreIndex !== null) {
     giocatori[modificaGiocatoreIndex] = data;
     modificaGiocatoreIndex = null;
@@ -66,14 +49,7 @@ document.getElementById("giocatoreForm").addEventListener("submit", async functi
 
 document.getElementById("movimentoForm").addEventListener("submit", function(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-  const file = formData.get("visitaMedicaDocumento");
-  if (file && file.size > 0) {
-    data.visitaMedicaFileName = file.name;
-    data.visitaMedicaMime = file.type;
-    data.visitaMedicaData = await readFileAsDataURL(file);
-  }
+  const data = Object.fromEntries(new FormData(e.target).entries());
 
   if (!contabilita || Array.isArray(contabilita)) {
     contabilita = { Entrata: [], Uscita: [] };
