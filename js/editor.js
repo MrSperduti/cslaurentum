@@ -9,11 +9,8 @@ document.getElementById("caricaGiocatori").addEventListener("change", function(e
   const reader = new FileReader();
   reader.onload = function() {
     try {
-      // Carica i giocatori dal file JSON
       giocatori = JSON.parse(reader.result);
-      
-      // Aggiungi l'anteprima JSON dei giocatori
-      aggiornaAnteprima();
+      aggiornaAnteprima(); // Aggiorniamo l'anteprima del JSON
       mostraTabellaGiocatori();
     } catch (err) {
       alert("Errore nel file giocatori.json");
@@ -27,17 +24,49 @@ document.getElementById("caricaContabilita").addEventListener("change", function
   const reader = new FileReader();
   reader.onload = function() {
     try {
-      // Carica la contabilità dal file JSON
       contabilita = JSON.parse(reader.result);
-      
-      // Aggiungi l'anteprima JSON della contabilità
-      aggiornaAnteprima();
+      aggiornaAnteprima(); // Aggiorniamo l'anteprima del JSON
       mostraTabellaContabilita();
     } catch (err) {
       alert("Errore nel file contabilita.json");
     }
   };
   reader.readAsText(e.target.files[0]);
+});
+
+// Gestione del submit del form per l'aggiunta o modifica di un giocatore
+document.getElementById("giocatoreForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+
+  // Gestione del caricamento della foto
+  const fotoInput = e.target.querySelector('input[name="foto"]');
+  if (fotoInput.files.length > 0) {
+    const fotoFile = fotoInput.files[0];
+    // Salviamo solo il nome del file della foto
+    data.foto = fotoFile.name;
+  }
+
+  // Gestione del caricamento del certificato medico (già esistente)
+  const certificatoInput = e.target.querySelector('input[name="certificatoMedico"]');
+  if (certificatoInput.files.length > 0) {
+    const certificatoFile = certificatoInput.files[0];
+    data.certificatoMedico = certificatoFile.name;
+  }
+
+  // Verifica se stiamo modificando un giocatore esistente
+  if (modificaGiocatoreIndex !== null) {
+    // Se il giocatore è già esistente, aggiorniamo i suoi dati
+    giocatori[modificaGiocatoreIndex] = data;
+    modificaGiocatoreIndex = null;
+  } else {
+    // Aggiungiamo un nuovo giocatore
+    giocatori.push(data);
+  }
+
+  aggiornaAnteprima(); // Aggiungi il salvataggio dell'anteprima
+  mostraTabellaGiocatori();
+  e.target.reset(); // Reset del form dopo l'invio
 });
 
 // Funzione per aggiornare l'anteprima del file JSON dei giocatori
