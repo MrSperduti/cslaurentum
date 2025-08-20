@@ -10,7 +10,6 @@
     "taglia": "XL",
     "maglia": "13",
     "visitaMedica": "No",
-    "certificatoMedico": "GianlucaSperduti-MOD.404_05_Richiesta_di_accesso_alla_rete_AMA_tramite_collegamento_VPN_SSL_compilabile_bis2 (1).pdf",
     "scadenza": "",
     "categoria": "Serie C2"
   },
@@ -53,7 +52,6 @@
     "taglia": "L",
     "maglia": "14",
     "visitaMedica": "No",
-    "certificatoMedico": "GianlucaSperduti-MOD.404_05_Richiesta_di_accesso_alla_rete_AMA_tramite_collegamento_VPN_SSL_compilabile_bis2 (1).pdf",
     "scadenza": "",
     "categoria": "Under 21"
   },
@@ -334,6 +332,51 @@
     "taglia": "L",
     "maglia": "28",
     "visitaMedica": "No",
+    "scadenza": "",
+    "categoria": "Under 21"
+  },
+  {
+    "nome": "Simone",
+    "cognome": "Grassi",
+    "dataNascita": "2006-08-07",
+    "indirizzo": "Viale Danimarca 157 Pomezia",
+    "telefono": "3667304494",
+    "documento": "CA05340NH",
+    "matricola": "",
+    "taglia": "M",
+    "maglia": "18",
+    "visitaMedica": "No",
+    "certificatoMedico": {},
+    "scadenza": "",
+    "categoria": "Under 21"
+  },
+  {
+    "nome": "Mattia",
+    "cognome": "De Vecchis",
+    "dataNascita": "2003-04-13",
+    "indirizzo": "Via Mar di Bering 40 Pomezia",
+    "telefono": "3519713186",
+    "documento": "CA95710PD",
+    "matricola": "",
+    "taglia": "M",
+    "maglia": "95",
+    "visitaMedica": "No",
+    "certificatoMedico": {},
+    "scadenza": "",
+    "categoria": "Serie C2"
+  },
+  {
+    "nome": "Matteo",
+    "cognome": "Merola",
+    "dataNascita": "2008-03-18",
+    "indirizzo": "Lungomare delle Sirene 164 Pomezia",
+    "telefono": "3711948657",
+    "documento": "CA57653NH",
+    "matricola": "",
+    "taglia": "L",
+    "maglia": "69",
+    "visitaMedica": "No",
+    "certificatoMedico": {},
     "scadenza": "",
     "categoria": "Under 21"
   }
